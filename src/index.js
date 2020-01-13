@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import Menu from './Menu'
 import * as serviceWorker from './serviceWorker';
+import CustomCesium from './CustomCesium';
 
 ReactDOM.render(<Menu />, document.getElementById('root'));
-ReactDOM.render(<App />, document.getElementById('application'));
+var customCesium = ReactDOM.render(<CustomCesium/>, document.getElementById('application'));
+customCesium.addListener();
+
 
 
 
