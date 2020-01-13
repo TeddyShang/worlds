@@ -27,6 +27,7 @@ const App = () => (
     </Entity>
     
   </Viewer>
+  
 );
 
 export default App;
