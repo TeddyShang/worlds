@@ -1,8 +1,8 @@
 import React from 'react';
 import logo from './logo.svg';
 import './CustomCesium.css';
-import { Viewer, PointGraphics, Entity} from "resium";
-import { Cartesian3, Cartographic} from "cesium";
+import { Viewer, PointGraphics, Entity, EntityDescription} from "resium";
+import { Cartesian3, Cartographic, Rectangle} from "cesium";
 
 
 
@@ -18,17 +18,21 @@ class CustomCesium extends React.Component {
     this.ref = React.createRef()
     this.state = {
       hasSearched : false,
-      searchPos: null
+      searchPos: null,
+      searchLoc: null
     };
   }
   render() {
     //If we have a search, create a new point to display
     //TODO: Keep previously installed points
-    //New location currently hardcoded to Georgia Tech
     if (this.state.hasSearched) {
       return <Viewer full ref={this.ref}>
 
-        <Entity position={this.state.searchPos} point={pointGraphics}></Entity>
+        <Entity position={this.state.searchPos} point={pointGraphics} name={this.state.searchLoc}>
+          <EntityDescription>
+            <p>{this.state.searchLoc}</p>
+          </EntityDescription>
+        </Entity>
 
 
       </Viewer>
@@ -49,19 +53,33 @@ class CustomCesium extends React.Component {
     const node = this.ref.current;
     let tempPosition;
 
-    //Saves search text, unsure how to use Cesium's address -> long/lat lookup
-    //Implement bing API or others?
-    node.cesiumElement.geocoder.viewModel.search.beforeExecute.addEventListener(function (e) {
-      tempPosition = node.cesiumElement.geocoder.viewModel.searchText;
+    //Saves search text for later
+    node.cesiumElement.geocoder.viewModel.search.beforeExecute.addEventListener((e) => {
+      var searchPosition = node.cesiumElement.geocoder.viewModel.searchText;
+      this.setState((state) => {
+        return {searchLoc: searchPosition}
+      });
     });
 
-    //When search entered, let the component know to update
-    //TODO: Long/Lat lookup so that this is not hardcoded
-    node.cesiumElement.geocoder.viewModel.search.afterExecute.addEventListener(function (e) {
-      const aPosition = Cartesian3.fromDegrees(-84.3984737,33.7756222, 100);
-      console.log('Added!');
-      this.setState({hasSearched:true, searchPos:aPosition});
-    }.bind(this));
+    //When search is done executing, find out where the new entity will be placed
+    //Save this information in the state so that the component rerenders with the new entity
+    node.cesiumElement.geocoder.viewModel.search.afterExecute.addEventListener((e) => {
+      let aPosition;
+      const geocoder = node.cesiumElement.geocoder.viewModel._geocoderServices[1];
+      let loc;
+      let searchPosition = this.state.searchLoc;
+      geocoder.geocode(searchPosition).then((result) => {
+        loc = result[0].destination;
+        if (loc instanceof Rectangle){
+          let finalLocation = Rectangle.center(loc);
+          aPosition = Cartesian3.fromRadians(finalLocation.longitude, finalLocation.latitude);
+        }
+        if (loc instanceof Cartesian3) {
+          aPosition = loc
+        }
+        this.setState({hasSearched:true, searchPos:aPosition});
+      });
+    });
   }
 }
 export default CustomCesium;
