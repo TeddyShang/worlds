@@ -5,6 +5,7 @@ import { Viewer, PointGraphics, Entity, EntityDescription} from "resium";
 import { Cartesian3, Cartographic, Rectangle} from "cesium";
 import ModalButton from './ModalBtn.js';
 import Modal from 'react-modal';
+import PackageModal from './PackageModal';
 
 
 
@@ -50,7 +51,7 @@ class CustomCesium extends React.Component {
   
       <div>
         <Modal isOpen = {this.state.modalOpen} onRequestClose={this.toggleModal}>
-          <p>asdf</p>
+          <PackageModal/>
           <button onClick={this.toggleModal}>
           Close
         </button>
