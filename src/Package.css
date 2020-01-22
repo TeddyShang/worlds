@@ -58,3 +58,50 @@ margin: 18px 0px;
     font-weight: 500;
     letter-spacing: 1px;
 }
+
+
+@media screen and (max-width: 1760px) {
+    .bookingWindow h2{
+        font-size: 24px;
+    }
+    .bookingWindow li{
+        font-size: 18px;
+        line-height: 1.5em;
+        font-weight: 500;
+    }
+
+    #bookingModal {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 1260px) {
+    .bookingWindow h2{
+        font-size: 24px;
+    }
+    .bookingWindow li{
+        font-size: 16px;
+    }
+
+    #bookingModal {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 928px) {
+    .bookingWindow h2{
+        font-size: 16px;
+        min-height: 36px;
+    }
+    .bookingWindow li{
+        font-size: 12px;
+        margin: 0px 15px;
+    }
+    .bookingWindow button{
+        width: 80%;
+        font-size: 18px;
+    }
+    .bookingWindow ul{
+        min-height: 150px;
+    }
+}
