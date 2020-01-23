@@ -1,8 +1,7 @@
 import React from 'react';
-import logo from './logo.svg';
 import './CustomCesium.css';
-import { Viewer, PointGraphics, Entity, EntityDescription} from "resium";
-import { Cartesian3, Cartographic, Rectangle} from "cesium";
+import { Viewer, Entity, EntityDescription} from "resium";
+import { Cartesian3, Rectangle} from "cesium";
 import ModalButton from './ModalBtn.js';
 import Modal from 'react-modal';
 import PackageModal from './PackageModal';
@@ -26,10 +25,14 @@ class CustomCesium extends React.Component {
       searchLoc: null,
       modalOpen: false,
     };
-    this.toggleModal = this.toggleModal.bind(this);
+    this.showModal = this.showModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
   }
-  toggleModal() {
-    this.setState(prevState => ({ modalOpen: !prevState.modalOpen }));
+  showModal() {
+    this.setState(prevState => ({ modalOpen: true }));
+  }
+  hideModal() {
+    this.setState(prevState => ({ modalOpen: false }));
   }
 
   render() {
@@ -41,7 +44,7 @@ class CustomCesium extends React.Component {
 
         <Entity position={this.state.searchPos} point={pointGraphics} name={this.state.searchLoc}>
           <EntityDescription>
-            <ModalButton handleClick={this.toggleModal}>
+            <ModalButton handleClick={this.showModal}>
               Book Now!
             </ModalButton>
             <p>{this.state.searchLoc}</p>
@@ -50,10 +53,10 @@ class CustomCesium extends React.Component {
       </Viewer>
   
       <div>
-        <Modal isOpen = {this.state.modalOpen} onRequestClose={this.toggleModal}>
+        <Modal isOpen = {this.state.modalOpen} onRequestClose={this.hideModal}>
           <PackageModal/>
-          <button onClick={this.toggleModal}>
-          Close
+          <button onClick={this.hideModal}>
+          Close Booking Screen
         </button>
         </Modal>
       </div>
@@ -72,7 +75,6 @@ class CustomCesium extends React.Component {
   //Add listeners to search, triggers function to create new entity
   addListener(){
     const node = this.ref.current;
-    let tempPosition;
 
     //Saves search text for later
     node.cesiumElement.geocoder.viewModel.search.beforeExecute.addEventListener((e) => {
