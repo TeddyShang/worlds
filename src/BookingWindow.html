@@ -1,0 +1,143 @@
+<html>
+<head>
+<style>
+    #bookingDetail {
+        width: 80%;
+        background-color: #1c2e41;
+        margin: auto;
+        border-radius: 10px;
+        padding: 0.75%;
+        font-family: Tahoma;
+    }
+    
+    .bookingTable {
+        width: 40%;
+        margin: 0px 0.75%;
+        display:inline-block;
+        background-color: #6c7784;
+        text-align: center;
+        border-color: #d7bd84;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 10px;
+        
+    }
+    .bookingForm * {
+        color:#d7bd84;
+        padding:0px;
+        
+    }
+    .bookingForm h2{
+        font-size: 28px;
+    
+    margin: 18px 0px;
+    }
+    .bookingForm ul{
+        min-height: 162px;
+    }
+    .bookingForm li{
+        font-size: 18px;
+        line-height: 1.5em;
+        font-weight: 500;
+    }
+    .bookingForm button{
+        display: inline-block;
+        background-color: #445262;
+        border-color: #d7bd84;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 10px;
+        text-decoration: none;
+        width: 45%;
+        font-size: 30px;
+        line-height: 1.5em;
+        color: white;
+        padding: 10px;
+        font-weight: 400;
+        margin: 10px auto;
+    }
+    .bookingForm table, th, td {
+        border: solid 2px #d7bd84;
+        background-color: #445262;
+        border-collapse: collapse;
+        padding: 2px 3px;
+        text-align: center;
+    }
+    </style>
+</head>   
+<body onload="createTable()">
+    <div id="bookingDetail">
+        <div class="bookingForm">
+            <p>
+                <li> Name: </li>
+                <input type="text" id="username" />
+                <li> Address: </li>
+                <input type="text" id="address" />
+            </p>
+            <div id="roomList"></div>
+            <p>
+                <input type="button" id="addRow" value="Add Row" onclick="addRow()" />
+                <input type="button" id="submit" value="Submit Data"/>
+                <li> Date: </li>
+                <input type="datetime" id="date" />
+            </p>
+        </div>
+    </div>
+</body>
+
+
+<script>
+var date = {startDate: new Date()};
+    function datePick(d){
+        this.setState({startDate: d})
+    }
+var arrHead = new Array();
+    arrHead = ['', 'Room', '#', 'Media Type']; 
+
+    function createTable() {
+        var bookingTable = document.createElement('table');
+        bookingTable.setAttribute('id', 'bookingTable');
+
+        var tr = bookingTable.insertRow(-1);
+
+        // initializing header
+        for (var h = 0; h < arrHead.length; h++) {
+            var th = document.createElement('th');          
+            th.innerHTML = arrHead[h];
+            tr.appendChild(th);
+        }
+
+        var div = document.getElementById('roomList');
+        div.appendChild(bookingTable);
+    }
+    function addRow() {
+        var empTab = document.getElementById('bookingTable');
+
+        var rowCnt = empTab.rows.length;      
+        var tr = empTab.insertRow(rowCnt);     
+        tr = empTab.insertRow(rowCnt);
+
+        for (var c = 0; c < arrHead.length; c++) {
+            var td = document.createElement('td');          
+            td = tr.insertCell(c);
+
+            if (c == 0) {  
+                //remove button is not functioning, hence it is commented for now
+                // var button = document.createElement('input');
+                // button.setAttribute('type', 'button');
+                // button.setAttribute('value', 'Remove');
+                // button.setAttribute('onclick', 'removeRow(this)');
+                // td.appendChild(button);
+            }
+            else {
+                var ele = document.createElement('input');
+                ele.setAttribute('type', 'text');
+                ele.setAttribute('value', '');
+
+                td.appendChild(ele);
+            }
+        }
+    }
+</script>
+</html>
+    
