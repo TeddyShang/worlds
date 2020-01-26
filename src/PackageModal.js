@@ -2,7 +2,7 @@ import React from 'react';
 import './Package.css';
 
 const PackageModal = () => (
-<div id="bookingModal">
+<div>
     <div class="bookingWindow">
         <h2>Photos</h2>
         <ul>

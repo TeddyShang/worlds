@@ -7,6 +7,15 @@
     font-family: Tahoma;
 }
 
+.bookingModal {
+    width: 60%;
+    background-color: #1c2e41;
+    margin: auto;
+    border-radius: 10px;
+    padding: 0.75%;
+    font-family: Tahoma;
+}
+
 .bookingWindow {
     width: 30%;
     margin: 0px 0.75%;

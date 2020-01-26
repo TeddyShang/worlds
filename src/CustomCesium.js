@@ -53,7 +53,8 @@ class CustomCesium extends React.Component {
       </Viewer>
   
       <div>
-        <Modal isOpen = {this.state.modalOpen} onRequestClose={this.hideModal}>
+        <Modal isOpen = {this.state.modalOpen} onRequestClose={this.hideModal}
+          className={"bookingModal"}>
           <PackageModal/>
           <button onClick={this.hideModal}>
           Close Booking Screen
