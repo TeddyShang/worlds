@@ -11,13 +11,19 @@
     width: 60%;
     background-color: #1c2e41;
     margin: auto;
+    margin-top: 100px;
     border-radius: 10px;
     padding: 0.75%;
     font-family: Tahoma;
 }
 
+.bookingModal button {
+    display: inherit;
+    margin: auto;
+}
+
 .bookingWindow {
-    width: 30%;
+    width: 31%;
     margin: 0px 0.75%;
     display:inline-block;
     background-color: #6c7784;
