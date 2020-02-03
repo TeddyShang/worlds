@@ -33,8 +33,6 @@ class PackageModal extends React.Component {
         </ul>
         <span class="price">199$</span>
         <button onClick= {this._test}>Book Now</button>
-        {this.state.showComponent ?
-            <BookingScreen /> : null }
     </div>
     <div class="bookingWindow">
         <h2>Photo & Video</h2>
