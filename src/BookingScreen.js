@@ -1,18 +1,57 @@
 import React from 'react';
 import './BookingWindow.css';
+import { thisExpression } from '@babel/types';
 
 
 class BookingScreen extends React.Component {
 
+    state = {
+        name: "",
+        address: "",
+        date: "",
+        rooms: [
+            // {
+            //     name: "Living Room",
+            //     photos: 0,
+            //     video: false
+            // }
+        ]
+    }
+    rooms = [
+        "Entryway", "Kitchen", "Living Room", 
+        "Home Office", "Dining Room", "Laundry Room",
+        "Master Bedroom", "Master Bathroom", "Master Closet",
+
+        "Home | Frontview", "Garage", "Front Yard",
+        "Driveway", "Side Yard", "Backyard",
+        "Deck", "Patio", "Shed",
+
+        "Bedroom 1", "Full Bathroom 1", "Storage Room",
+        "Bedroom 2", "Full Bathroom 2", "Sun Room",
+        "Bedroom 3", "Half Bathroom 1", "Attic",
+        "Bedroom 4", "Half Bathroom 2", "Home Gym",
+    ]
+
     constructor() {
         super();
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        
+        // Populate rooms array
+        this.state.rooms = [];
+        this.rooms.map((val, idx)=> {
+            this.state.rooms.push({
+                name: val,
+                photos: 0,
+                video: false
+            })
+        })
       }
 
       handleSubmit(event) {
-        console.log("Submitting");
         event.preventDefault();
         const data = new FormData(event.target);
+        console.log("Submitting ", data);
         
         fetch('/api/form-submit-url', {
           method: 'POST',
@@ -20,13 +59,46 @@ class BookingScreen extends React.Component {
         });
       }
 
+      handleChange(event) {
+        console.log("Changing, ", event.target);
+
+        // Fancy handling if part of room
+        if (["photos", "video"].includes(event.target.className)) {
+            let rooms = [...this.state.rooms];
+            let val = 0;
+            if (event.target.className == "photos") {
+                val = parseInt(event.target.value);
+            } else if (event.target.className == "video") {
+                val = event.target.checked;
+            }
+            rooms[event.target.dataset.id][event.target.className] = val;
+            this.setState( {rooms}, ()=> console.log(this.state.rooms));
+        } else {
+            // Name, address, date updating
+            this.setState({[event.target.name]: event.target.value})
+        }
+        console.log("New State, ",this.state);
+      }
+
+    renderRoom(idx) {
+        return(<RoomBookingEntry myDataProp = {this.state.rooms[idx].name} dataId = {idx}></RoomBookingEntry>)
+    }
+
+    renderAllRooms() {
+        var roomsToRender = [];
+        for (var i=0;i<this.state.rooms.length;i++) {
+            roomsToRender.push(this.renderRoom(i));
+        }
+        return roomsToRender;
+    }
+
     render() {
         return (
         <div id="bookingDetail">
             <div class="bookingForm">
-                <form onSubmit={this.handleSubmit}>
+                <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
                     <label>Name</label><br/>
-                    <input type="text" id="username" name="name" class="text"/>
+                    <input type="text" id="name" name="name" class="text"/>
                     <label>Address</label><br/>
                     <input type="text" id="address" name="Address" class="text"/>
                     <label>Date</label><br/>
@@ -34,16 +106,8 @@ class BookingScreen extends React.Component {
                 
                     <div id="roomList">
 
-                        <div class="roomEntry">
-                            <label>Living Room</label>
-                            <select>
-                                <option value = "1">1</option>
-                                <option value = "2">2</option>
-                                <option value = "3">3</option>
-                                <option value = "4">4</option>
-                            </select>
-                            <input type="checkbox"></input>
-                        </div>
+                    {this.renderAllRooms() }
+
                     </div>
                     <input type="button" id="addRow" value="Add Row" onclick="addRow()" />
                     <br></br>
@@ -55,3 +119,26 @@ class BookingScreen extends React.Component {
     };
 }
 export default BookingScreen;
+
+class RoomBookingEntry extends React.Component {
+
+    constructor() {
+        super();
+      }
+
+    render() {
+        return (
+<           div class="roomEntry">
+            <label>{this.props.myDataProp}</label>
+                <select class="photos" name = "photos" data-id={this.props.dataId}>
+                    <option value = {0}>0</option>
+                    <option value = {1}>1</option>
+                    <option value = {2}>2</option>
+                    <option value = {3}>3</option>
+                    <option value = {4}>4</option>
+                </select>
+                <input class="video" type="checkbox" data-id={this.props.dataId}></input>
+            </div>
+        )
+    }
+}
