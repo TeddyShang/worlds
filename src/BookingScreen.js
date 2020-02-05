@@ -17,6 +17,7 @@ class BookingScreen extends React.Component {
             // }
         ]
     }
+    photosRequested = 0; // amount of photos currently selected
     rooms = [
         "Entryway", "Kitchen", "Living Room", 
         "Home Office", "Dining Room", "Laundry Room",
@@ -73,6 +74,12 @@ class BookingScreen extends React.Component {
             }
             rooms[event.target.dataset.id][event.target.className] = val;
             this.setState( {rooms}, ()=> console.log(this.state.rooms));
+
+            // Update Photo Counter
+            this.photosRequested = 0;
+            for (var i = 0; i < rooms.length; i++) {
+                this.photosRequested += rooms[i]["photos"];
+            }
         } else {
             // Name, address, date updating
             this.setState({[event.target.name]: event.target.value})
@@ -83,10 +90,26 @@ class BookingScreen extends React.Component {
     renderRoom(idx) {
         return(<RoomBookingEntry myDataProp = {this.state.rooms[idx].name} dataId = {idx}></RoomBookingEntry>)
     }
+    renderBanner(title) {
+        return(<div class="banner">{title}</div>)
+    }
+    renderPhotoCounter() {
+        return(<div id="photoCounter">{this.photosRequested} / 60 Photos</div>)
+    }
 
     renderAllRooms() {
         var roomsToRender = [];
         for (var i=0;i<this.state.rooms.length;i++) {
+            var bannerTitle = "";
+            switch (i) {
+                case 0: bannerTitle = "Home Interior | Highlight Rooms"; break;
+                case 9: bannerTitle = "Property Exterior | Outside"; break;
+                case 18: bannerTitle = "House & Property Additional Rooms or Features"; break;
+            }
+            if (bannerTitle != "") {
+                roomsToRender.push(this.renderBanner(bannerTitle));
+            }
+
             roomsToRender.push(this.renderRoom(i));
         }
         return roomsToRender;
@@ -95,6 +118,7 @@ class BookingScreen extends React.Component {
     render() {
         return (
         <div id="bookingDetail">
+            <h1>iVue Real Estate Media Checklist</h1>
             <div class="bookingForm">
                 <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
                     <label>Name</label><br/>
@@ -109,7 +133,8 @@ class BookingScreen extends React.Component {
                     {this.renderAllRooms() }
 
                     </div>
-                    <input type="button" id="addRow" value="Add Row" onclick="addRow()" />
+                    {this.renderPhotoCounter()}
+                    {/* <input type="button" id="addRow" value="Add Row" onclick="addRow()" /> */}
                     <br></br>
                     <button> Submit Data</button>
                 </form>
