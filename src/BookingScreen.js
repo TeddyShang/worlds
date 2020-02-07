@@ -9,6 +9,7 @@ class BookingScreen extends React.Component {
         name: "",
         address: "",
         date: "",
+        location: "",
         rooms: [
             // {
             //     name: "Living Room",
@@ -124,9 +125,9 @@ class BookingScreen extends React.Component {
                     <label>Name</label><br/>
                     <input type="text" id="name" name="name" class="text"/>
                     <label>Address</label><br/>
-                    <input type="text" id="address" name="Address" class="text"/>
+                    <input type="text" id="address" name="address" class="text"/>
                     <label>Date</label><br/>
-                    <input type="datetime" id="date" name="Date" class="text" />
+                    <input type="date" id="date" name="date" class="text" />
                 
                     <div id="roomList">
 
