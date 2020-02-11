@@ -8,9 +8,7 @@ import PackageModal from './PackageModal';
 
 
 
-//Generate a initial entity
 //Note Cartesian3.fromDegrees(LONG, LAT, elevation)
-const testPosition = Cartesian3.fromDegrees(-64.0707383, 40.7117244, 100)
 const pointGraphics = { pixelSize: 10 };
 
 //TODO: Dynamically generate Entities based on DB
@@ -24,6 +22,7 @@ class CustomCesium extends React.Component {
       searchPos: null,
       searchLoc: null,
       modalOpen: false,
+      bookings: []
     };
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
@@ -36,11 +35,34 @@ class CustomCesium extends React.Component {
   }
 
   render() {
+    const {hasSearched, bookings} = this.state;
     //If we have a search, create a new point to display
     //TODO: Keep previously installed points
-    if (this.state.hasSearched) {
+    if (hasSearched) {
       return <React.Fragment>
       <Viewer full ref={this.ref}>
+      {bookings.map((booking) => (
+          <Entity position={booking.locationCoordinates} point={pointGraphics} name={booking.address}>
+
+
+            <EntityDescription>
+              <h1>Address: {booking.address}</h1>
+              <p>Date Requested: {booking.dateRequested}</p>
+              <p>RealtorId: {booking.realtorId}</p>
+              <p>Booking Privacy: {booking.bookingPrivacy}</p>
+              <p>Booking Status: {booking.bookingStatus}</p>
+              <p>Rooms:</p> <table> <tr><th>Room Name</th> <th># Photos</th> <th>Videos?</th></tr>
+              {booking.rooms.map((row) => (
+                <tr>
+                  <td>{row[0]}</td>
+                  <td>{row[1]}</td>
+                  <td>{row[2]}</td>
+                </tr>
+              ))}
+              </table>
+            </EntityDescription>
+          </Entity>
+        ))}
 
         <Entity position={this.state.searchPos} point={pointGraphics} name={this.state.searchLoc}>
           <EntityDescription>
@@ -66,13 +88,54 @@ class CustomCesium extends React.Component {
     } else {
       return <Viewer full ref={this.ref}>
 
-        <Entity position={testPosition} point={pointGraphics}></Entity>
+        {bookings.map((booking) => (
+          <Entity position={booking.locationCoordinates} point={pointGraphics} name={booking.address}>
+
+
+            <EntityDescription>
+              <h1>Address: {booking.address}</h1>
+              <p>Date Requested: {booking.dateRequested}</p>
+              <p>RealtorId: {booking.realtorId}</p>
+              <p>Booking Privacy: {booking.bookingPrivacy}</p>
+              <p>Booking Status: {booking.bookingStatus}</p>
+              <p>Rooms:</p> <table> <tr><th>Room Name</th> <th># Photos</th> <th>Videos?</th></tr>
+              {booking.rooms.map((row) => (
+                <tr>
+                  <td>{row[0]}</td>
+                  <td>{row[1]}</td>
+                  <td>{row[2]}</td>
+                </tr>
+              ))}
+              </table>
+            </EntityDescription>
+          </Entity>
+        ))}
 
 
       </Viewer>
     }
 
   }
+  //Code to fetch booking objects from server
+  componentDidMount() {
+    let currentComponent = this;
+    fetch('http://localhost:8080/bookings')
+    .then(res => res.json())
+    .then((function(data){
+      var tempBookings = data._embedded.bookings;
+      tempBookings.forEach(function(booking){
+        var parseString = booking.locationCoordinates.substring(1, booking.locationCoordinates.length - 1);
+        var posArray = parseString.split(",");
+        var locationCoordinates = Cartesian3.fromElements(parseFloat(posArray[0]), parseFloat(posArray[1]), parseFloat(posArray[2]));
+        booking.locationCoordinates = locationCoordinates;
+      });
+      currentComponent.setState({bookings: tempBookings})
+    }))
+    .catch(console.log)
+  }
+
+
+
   //Add listeners to search, triggers function to create new entity
   addListener(){
     const node = this.ref.current;
