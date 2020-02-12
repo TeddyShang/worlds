@@ -6,7 +6,7 @@ import { thisExpression } from '@babel/types';
 class BookingScreen extends React.Component {
 
     state = {
-        realtorId: "0", //hardcoded
+        realtorId: "5e42cae94331f24e84a9a6f5", //hardcoded
         address: "",
         dateRequested: "",
         locationCoordinates: "",
@@ -62,10 +62,15 @@ class BookingScreen extends React.Component {
         //const data = new FormData(this.state);
         console.log("Submitting ", this.state);
         
-        fetch('http://8080/bookings', {
+        fetch('http://localhost:8080/bookings', {
           method: 'POST',
           body: JSON.stringify(this.state),
+          headers: {
+              'Content-Type': 'application/json'
+          }
         });
+        console.log("Submitted.");
+
       }
 
       handleChange(event) {
