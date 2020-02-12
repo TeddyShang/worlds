@@ -55,7 +55,7 @@ class CustomCesium extends React.Component {
       <div>
         <Modal isOpen = {this.state.modalOpen} onRequestClose={this.hideModal}
           className={"bookingModal"}>
-          <PackageModal/>
+          <PackageModal location={this.state.searchPos.toString()}/>
           <button onClick={this.hideModal}>
           Close Booking Screen
         </button>

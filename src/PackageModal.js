@@ -7,9 +7,10 @@ class PackageModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-        showComponent: false,
+        showComponent: false
         };
     this._onButtonClick = this._onButtonClick.bind(this);
+    this._test = this._test.bind(this);
     }
     
     _onButtonClick() {
@@ -18,7 +19,7 @@ class PackageModal extends React.Component {
     });
   }
     _test(){
-        ReactDOM.render(<BookingScreen/>, document.getElementById('application'));
+        ReactDOM.render(<BookingScreen location={this.props.location}/>, document.getElementById('application'));
     }
     render () {
         return (
@@ -46,8 +47,6 @@ class PackageModal extends React.Component {
         </ul>
         <span class="price">399$</span>
         <button onClick= {this._test}>Book Now</button>
-        {this.state.showComponent ?
-        <BookingScreen /> : null }
     </div>
     <div class="bookingWindow">
         <h2>Photo, Video, & Drone</h2>
@@ -61,8 +60,6 @@ class PackageModal extends React.Component {
         </ul>
         <span class="price">599$</span>
         <button onClick= {this._test}>Book Now</button>
-        {this.state.showComponent ?
-        <BookingScreen /> : null }
     </div>
 </div>
         );

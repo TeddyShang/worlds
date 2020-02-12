@@ -6,15 +6,15 @@ import { thisExpression } from '@babel/types';
 class BookingScreen extends React.Component {
 
     state = {
-        name: "",
+        realtorId: "0", //hardcoded
         address: "",
-        date: "",
-        location: "",
+        dateRequested: "",
+        locationCoordinates: "",
         rooms: [
             // {
             //     name: "Living Room",
-            //     photos: 0,
-            //     video: false
+            //     photos: "0",
+            //     video: "False"
             // }
         ]
     }
@@ -38,26 +38,33 @@ class BookingScreen extends React.Component {
         super();
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+
+        
         
         // Populate rooms array
         this.state.rooms = [];
         this.rooms.map((val, idx)=> {
-            this.state.rooms.push({
-                name: val,
-                photos: 0,
-                video: false
-            })
+            this.state.rooms.push([
+                val, 
+                "0",
+                "False"
+            ])
         })
+      }
+
+      componentDidMount() {
+        this.state.locationCoordinates = this.props.location;
+        console.log("Entering location coordinates", this.props.location);
       }
 
       handleSubmit(event) {
         event.preventDefault();
-        const data = new FormData(event.target);
-        console.log("Submitting ", data);
+        //const data = new FormData(this.state);
+        console.log("Submitting ", this.state);
         
-        fetch('/api/form-submit-url', {
+        fetch('http://8080/bookings', {
           method: 'POST',
-          body: data,
+          body: JSON.stringify(this.state),
         });
       }
 
@@ -69,27 +76,31 @@ class BookingScreen extends React.Component {
             let rooms = [...this.state.rooms];
             let val = 0;
             if (event.target.className == "photos") {
-                val = parseInt(event.target.value);
+                val = event.target.value;
+                rooms[event.target.dataset.id][1] = val;
             } else if (event.target.className == "video") {
-                val = event.target.checked;
+                val = (event.target.checked ? "True" : "False");
+                rooms[event.target.dataset.id][2] = val;
             }
-            rooms[event.target.dataset.id][event.target.className] = val;
+            //rooms[event.target.dataset.id][event.target.className] = val;
             this.setState( {rooms}, ()=> console.log(this.state.rooms));
 
             // Update Photo Counter
             this.photosRequested = 0;
             for (var i = 0; i < rooms.length; i++) {
-                this.photosRequested += rooms[i]["photos"];
+                this.photosRequested += parseInt(rooms[i][1]);
             }
         } else {
-            // Name, address, date updating
-            this.setState({[event.target.name]: event.target.value})
+            // address, date updating. Not name (dead field for now)
+            if (event.target.name != "name") {
+                this.setState({[event.target.name]: event.target.value})
+            }
         }
         console.log("New State, ",this.state);
       }
 
     renderRoom(idx) {
-        return(<RoomBookingEntry myDataProp = {this.state.rooms[idx].name} dataId = {idx}></RoomBookingEntry>)
+        return(<RoomBookingEntry myDataProp = {this.state.rooms[idx][0]} dataId = {idx}></RoomBookingEntry>)
     }
     renderBanner(title) {
         return(<div class="banner">{title}</div>)
@@ -127,7 +138,7 @@ class BookingScreen extends React.Component {
                     <label>Address</label><br/>
                     <input type="text" id="address" name="address" class="text"/>
                     <label>Date</label><br/>
-                    <input type="date" id="date" name="date" class="text" />
+                    <input type="date" id="date" name="dateRequested" class="text" />
                 
                     <div id="roomList">
 
