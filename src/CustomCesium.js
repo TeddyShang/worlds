@@ -37,7 +37,6 @@ class CustomCesium extends React.Component {
   render() {
     const {hasSearched, bookings} = this.state;
     //If we have a search, create a new point to display
-    //TODO: Keep previously installed points
     if (hasSearched) {
       return <React.Fragment>
       <Viewer full ref={this.ref}>
@@ -77,7 +76,7 @@ class CustomCesium extends React.Component {
       <div>
         <Modal isOpen = {this.state.modalOpen} onRequestClose={this.hideModal}
           className={"bookingModal"}>
-          <PackageModal location={this.state.searchPos.toString()}/>
+          <PackageModal locationCoordinates={this.state.searchPos.toString()} address={this.state.searchLoc}/>
           <button onClick={this.hideModal}>
           Close Booking Screen
         </button>

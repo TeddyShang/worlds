@@ -19,7 +19,7 @@ class PackageModal extends React.Component {
     });
   }
     _test(){
-        ReactDOM.render(<BookingScreen location={this.props.location}/>, document.getElementById('application'));
+        ReactDOM.render(<BookingScreen locationCoordinates={this.props.locationCoordinates} address={this.props.address}/>, document.getElementById('application'));
     }
     render () {
         return (
