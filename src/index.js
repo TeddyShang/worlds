@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import './BaseIVueStyle.css'
 import Menu from './Menu'
 import * as serviceWorker from './serviceWorker';
 import CustomCesium from './CustomCesium';
