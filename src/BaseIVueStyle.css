@@ -29,10 +29,19 @@ h1, h2 {
     background-color: #445262;
     border-color: #d7bd84;  
     color: #d7bd84;  
-;
     margin-bottom: 10px;
 }
 
 .fullWidth {
     width: 100%;
+}
+
+.inputText{
+    display:block;
+    background-color: #1c2e41;
+    border-color: #d7bd84;  
+    color: #d7bd84;  
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 95.5%;
 }
