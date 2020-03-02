@@ -47,7 +47,7 @@ class CustomCesium extends React.Component {
 
   render() {
     const {hasSearched, bookings} = this.state;
-    var filteredbookings, photoChecked, videoChecked = this.state;
+    var filteredbookings = this.state;
     //If we have a search, create a new point to display
     if (hasSearched) {
       return <React.Fragment>
@@ -138,10 +138,10 @@ class CustomCesium extends React.Component {
                     <AccordionItemPanel>
                         <div>
                         <label> Photo </label>
-                        <input class="photo" type="checkbox" photoChecked= "false" onChange = {(e) => this.setState(prevState => ({photoChecked: !prevState.photoChecked}))}></input>
+                        <input type="checkbox" onChange = {(e) => this.setState(prevState => ({photoChecked: !prevState.photoChecked}))}></input>
                         <br/>
                         <label> Video </label>
-                        <input class="video" type="checkbox" onChange = {(e) => this.setState(prevState => ({videoChecked: !prevState.videoChecked}))}></input>
+                        <input type="checkbox" onChange = {(e) => this.setState(prevState => ({videoChecked: !prevState.videoChecked}))}></input>
                         </div>
                     </AccordionItemPanel>
                 </AccordionItem>
