@@ -1,0 +1,47 @@
+/*
+    Created by Andrew.
+    Used to have common CSS across pages specific to the iVue Media styling
+*/
+
+.mainCenterDiv {
+    width: 750px;
+    background-color: #1c2e41;
+    color: #d7bd84;
+    margin: auto;
+    border-radius: 10px;
+    padding: 0.75%;
+    font-family: Tahoma;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #d7bd84;
+}
+
+.subCenterDiv {
+    width: 60%;
+    margin:auto;
+}
+
+.button {
+    padding: 10px;
+    display: inline-block;
+    background-color: #445262;
+    border-color: #d7bd84;  
+    color: #d7bd84;  
+    margin-bottom: 10px;
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+.inputText{
+    display:block;
+    background-color: #1c2e41;
+    border-color: #d7bd84;  
+    color: #d7bd84;  
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 95.5%;
+}
