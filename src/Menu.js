@@ -41,6 +41,7 @@ export default function SimpleMenu() {
         <MenuItem onClick={signUpScreen}>Sign Up</MenuItem>
       </Menu>
       <div id = "application"></div>
+      <div id = "booking"></div>
     </div>
     
   );
