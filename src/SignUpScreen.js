@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import Menu from './Menu'
 import CustomCesium from './CustomCesium';
+import LogInScreen from './LogInScreen';
 
 const RegisType = {
     STAFF: 0,
@@ -40,7 +41,7 @@ export default SignUpScreen;
 class SignUpScreenRegistration extends React.Component {
 
     cancelRegistration = () => {
-        ReactDOM.render(<SignUpScreen/>, document.getElementById('application'));
+        ReactDOM.render(<LogInScreen/>, document.getElementById('application'));
     }
 
     constructor() {
