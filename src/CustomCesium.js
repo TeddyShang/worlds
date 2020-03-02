@@ -6,6 +6,14 @@ import ModalButton from './ModalBtn.js';
 import Modal from 'react-modal';
 import PackageModal from './PackageModal';
 
+import {
+    Accordion,
+    AccordionItem,
+    AccordionItemHeading,
+    AccordionItemButton,
+    AccordionItemPanel,
+} from 'react-accessible-accordion';
+import 'react-accessible-accordion/dist/fancy-example.css';
 
 
 //Note Cartesian3.fromDegrees(LONG, LAT, elevation)
@@ -22,7 +30,10 @@ class CustomCesium extends React.Component {
       searchPos: null,
       searchLoc: null,
       modalOpen: false,
-      bookings: []
+      bookings: [],
+      filteredbookings: [],
+      videoChecked: false,
+      photoChecked: false,
     };
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
@@ -36,13 +47,14 @@ class CustomCesium extends React.Component {
 
   render() {
     const {hasSearched, bookings} = this.state;
+    var filteredbookings, photoChecked, videoChecked = this.state;
     //If we have a search, create a new point to display
     if (hasSearched) {
       return <React.Fragment>
       <Viewer full ref={this.ref}>
       {bookings.map((booking) => (
           <Entity position={booking.locationCoordinates} point={pointGraphics} name={booking.address}>
-
+            
 
             <EntityDescription>
               <h1>Address: {booking.address}</h1>
@@ -50,6 +62,7 @@ class CustomCesium extends React.Component {
               <p>RealtorId: {booking.realtorId}</p>
               <p>Booking Privacy: {booking.bookingPrivacy}</p>
               <p>Booking Status: {booking.bookingStatus}</p>
+              <p> Tags: {booking.tags}</p>
               <p>Rooms:</p> <table> <tr><th>Room Name</th> <th># Photos</th> <th>Videos?</th></tr>
               {booking.rooms.map((row) => (
                 <tr>
@@ -85,18 +98,64 @@ class CustomCesium extends React.Component {
 
   </React.Fragment>
     } else {
+      
+      //on click of the checkboxes change the string in includes.
+      filteredbookings = this.state.bookings;
+
+      //filter photos only
+      if(this.state.photoChecked.toString() === "true" && this.state.videoChecked.toString() === "false") {
+      filteredbookings = this.state.bookings.filter(bookings => bookings.tags.includes("Photos"));
+      filteredbookings = filteredbookings.filter(bookings =>  !bookings.tags.includes("Videos") );
+      }
+      
+      //filter videos only
+      if(this.state.photoChecked.toString() === "false" && this.state.videoChecked.toString() === "true") {
+      filteredbookings = this.state.bookings.filter(bookings => bookings.tags.includes("Videos"));
+      filteredbookings = filteredbookings.filter(bookings =>  !bookings.tags.includes("Photos") );
+      }
+      //let all photos and videos
+      if(this.state.photoChecked.toString() === "true" && this.state.videoChecked.toString() === "true") {
+      filteredbookings = this.state.bookings.filter(bookings => bookings.tags.includes("Videos"));
+      filteredbookings = filteredbookings.filter(bookings =>  bookings.tags.includes("Photos") );
+      }
+      
+
+      console.log(filteredbookings);
+      console.log(this.state.photoChecked.toString());
+      console.log(this.state.videoChecked.toString());
+    
+    //Param is data from child when it gets called.
+
       return <Viewer full ref={this.ref}>
-
-        {bookings.map((booking) => (
+      <div style= {{height:"min-content", width:"min-content", right:"6%", zIndex:"999",top: "54px", position: "absolute"}}>
+            <Accordion allowZeroExpanded= "true">
+                <AccordionItem style={{backgroundColor: "beige"}}>
+                    <AccordionItemHeading>
+                        <AccordionItemButton>
+                        Filters
+                        </AccordionItemButton>
+                    </AccordionItemHeading>
+                    <AccordionItemPanel>
+                        <div>
+                        <label> Photo </label>
+                        <input class="photo" type="checkbox" photoChecked= "false" onChange = {(e) => this.setState(prevState => ({photoChecked: !prevState.photoChecked}))}></input>
+                        <br/>
+                        <label> Video </label>
+                        <input class="video" type="checkbox" onChange = {(e) => this.setState(prevState => ({videoChecked: !prevState.videoChecked}))}></input>
+                        </div>
+                    </AccordionItemPanel>
+                </AccordionItem>
+            </Accordion>
+        </div>
+        {filteredbookings.map((booking) => (
           <Entity position={booking.locationCoordinates} point={pointGraphics} name={booking.address}>
-
-
             <EntityDescription>
               <h1>Address: {booking.address}</h1>
               <p>Date Requested: {booking.dateRequested}</p>
               <p>RealtorId: {booking.realtorId}</p>
               <p>Booking Privacy: {booking.bookingPrivacy}</p>
               <p>Booking Status: {booking.bookingStatus}</p>
+              <p> Tags: {booking.tags}</p>
               <p>Rooms:</p> <table> <tr><th>Room Name</th> <th># Photos</th> <th>Videos?</th></tr>
               {booking.rooms.map((row) => (
                 <tr>
@@ -109,8 +168,6 @@ class CustomCesium extends React.Component {
             </EntityDescription>
           </Entity>
         ))}
-
-
       </Viewer>
     }
 

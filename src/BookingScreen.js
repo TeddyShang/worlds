@@ -20,7 +20,8 @@ class BookingScreen extends React.Component {
             //     photos: "0",
             //     video: "False"
             // }
-        ]
+        ],
+        tags:[],
     }
     photosRequested = 0; // amount of photos currently selected
     rooms = [
@@ -60,15 +61,34 @@ class BookingScreen extends React.Component {
 
         var locationCoordinates = this.props.locationCoordinates;
         var address = this.props.address;
-        this.setState({
+        this.setState ({
             address: address,
-            locationCoordinates : locationCoordinates
+            locationCoordinates : locationCoordinates,
         })
         //console.log("Entering location coordinates", this.props.location, this.props.address);
     }
 
     handleSubmit(event) {
         event.preventDefault();
+
+        //Duplicate array
+        var tagsarr = new Array();
+
+        for (var i = 0; i < this.state.rooms.length; i++) {
+            if (this.state.rooms[i][1] > 0) {
+                tagsarr.push("Photos");
+            }
+            if (this.state.rooms[i][2] == "True") {
+                tagsarr.push("Videos");
+            }
+        }
+        //Filter unique values to put into tags array.
+        const unique = (value, index, self) => {
+            return self.indexOf(value) === index
+        }
+        this.state.tags = tagsarr.filter(unique);
+        console.log(this.state.tags);
+
         //const data = new FormData(this.state);
         //console.log("Submitting ", this.state);
 
@@ -98,6 +118,7 @@ class BookingScreen extends React.Component {
             if (event.target.className == "photos") {
                 val = event.target.value;
                 rooms[event.target.dataset.id][1] = val;
+
             } else if (event.target.className == "video") {
                 val = (event.target.checked ? "True" : "False");
                 rooms[event.target.dataset.id][2] = val;
@@ -185,7 +206,7 @@ class RoomBookingEntry extends React.Component {
 
     render() {
         return (
-            <           div class="roomEntry">
+            <div class="roomEntry">
                 <label>{this.props.myDataProp}</label>
                 <select class="photos" name="photos" data-id={this.props.dataId}>
                     <option value={0}>0</option>
