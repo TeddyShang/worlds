@@ -35,7 +35,7 @@ class LogInScreen extends React.Component {
     }
 
     handleChange = (event) => {
-        console.log("Changing, ", event.target);
+        //console.log("Changing, ", event.target);
         // Update verified password
         if (["password, email"].includes(event.target.name)) {
             // TODO: Write to state password/email
@@ -44,14 +44,14 @@ class LogInScreen extends React.Component {
         else {
             this.setState({ [event.target.name]: event.target.value })
         }
-        console.log("New State, ", this.state);
+        //console.log("New State, ", this.state);
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
         console.log("Submitting ", this.state);
 
-        fetch('http://localhost:8080/[TODO:LOG-IN]', {
+        fetch('http://localhost:8080/login', {
             method: 'POST',
             body: JSON.stringify(this.state),
             headers: {
@@ -59,12 +59,14 @@ class LogInScreen extends React.Component {
             }
         })
         .then(function(response) {
-            console.log("Response Status: " + response.status);
+            //console.log("Response Status: " + response.status);
             if (response.status >= 400) {
                 // Error
                 return response.text();
             } else {
                 // On Success, Go to Map Screen
+                sessionStorage.setItem("logged_in", true);
+                sessionStorage.setItem("current_user", response.text());
                 ReactDOM.render(<Menu />, document.getElementById('root'));
                 var customCesium = ReactDOM.render(<CustomCesium/>, document.getElementById('application'));
                 customCesium.addListener();
@@ -75,14 +77,14 @@ class LogInScreen extends React.Component {
         }).catch((err) => {
             console.log("Errors: ", err.response);
         });
-        console.log("Submitted.");
+        //console.log("Submitted.");
     }
 
-    renderField(labelName, fieldName, inputType="text") {
+    renderField(labelName, fieldName, inputType) {
         return (
             <div>
                 <label>{labelName}</label>
-                <input type={inputType} class="inputText" name={fieldName}></input>
+                <input type={inputType} class="inputText" required name={fieldName}></input>
             </div>
         )
     }
@@ -93,8 +95,8 @@ class LogInScreen extends React.Component {
                 <h1>iVue Real Estate Log In</h1>
                 <div class="subCenterDiv">
                     <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
-                        {this.renderField("Email", "email")}
-                        {this.renderField("Password", "password")}
+                        {this.renderField("Email", "email", "email")}
+                        {this.renderField("Password", "password", "password")}
                         <br/>
                         <button class="button fullWidth ">Log In</button>
                         <button onClick={this.signUpScreen} class="button fullWidth ">Register</button>

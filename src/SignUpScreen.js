@@ -118,11 +118,11 @@ class SignUpScreenRegistration extends React.Component {
         console.log("Submitted.");
     }
 
-    renderField(labelName, fieldName, inputType="text") {
+    renderField(labelName, fieldName, inputType) {
         return (
             <div>
                 <label>{labelName}</label>
-                <input type={inputType} class="inputText" name={fieldName}></input>
+                <input type={inputType} class="inputText" required name={fieldName}></input>
             </div>
         )
     }
@@ -134,11 +134,11 @@ class SignUpScreenRegistration extends React.Component {
                 <div class="subCenterDiv">
                     <h2>Sign up as a {this.typeName}</h2>
                     <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
-                        {this.renderField("First Name", "firstName")}
-                        {this.renderField("Last Name", "lastName")}
+                        {this.renderField("First Name", "firstName", "text")}
+                        {this.renderField("Last Name", "lastName", "text")}
 
-                        {this.renderField("Realtor ID", "realtorID")}
-                        {this.renderField("Email", "email")}
+                        {this.renderField("Realtor ID", "realtorID", "text")}
+                        {this.renderField("Email", "email", "email")}
                         {this.renderField("Password", "password1", "password")}
                         {this.renderField("Confirm Password", "password2", "password")}
                         <br/>
