@@ -17,12 +17,17 @@ export default function SimpleMenu() {
     setAnchorEl(null);
   };
 
-  const signUpScreen = () => {
-    ReactDOM.render(<SignUpScreen/>, document.getElementById('application'));
-  };
-  const logInScreen = () => {
+  // const signUpScreen = () => {
+  //   ReactDOM.render(<SignUpScreen/>, document.getElementById('application'));
+  // };
+  // const logInScreen = () => {
+  //   ReactDOM.render(<LogInScreen/>, document.getElementById('application'));
+  // };
+
+  const logOut = () => {
+    sessionStorage.removeItem("logged_in");
     ReactDOM.render(<LogInScreen/>, document.getElementById('application'));
-  };
+  }
   
   const buttonStyle = {zIndex:999, backgroundColor:'white', top : '10px', left: '10px'}
   const MenuStyle = {zIndex:999}
@@ -41,9 +46,9 @@ export default function SimpleMenu() {
         style = {MenuStyle}
       >
         <MenuItem onClick={handleClose}>Dashboard</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
-        <MenuItem onClick={signUpScreen}>Sign Up</MenuItem>
-        <MenuItem onClick={logInScreen}>Log In</MenuItem>
+        <MenuItem onClick={logOut}>Logout</MenuItem>
+        {/* <MenuItem onClick={signUpScreen}>Sign Up</MenuItem>
+        <MenuItem onClick={logInScreen}>Log In</MenuItem> */}
       </Menu>
       <div id = "application"></div>
       <div id = "booking"></div>
