@@ -21,7 +21,8 @@ class LogInScreen extends React.Component {
     constructor() {
         super();
         this.state = {
-            // TODO: What is the state to log in with? What is server expecting?
+            // Email
+            // Password
         }
         this.typeName = "Null";
 
@@ -36,14 +37,8 @@ class LogInScreen extends React.Component {
 
     handleChange = (event) => {
         //console.log("Changing, ", event.target);
-        // Update verified password
-        if (["password, email"].includes(event.target.name)) {
-            // TODO: Write to state password/email
-        }
-        // Updating all other fields
-        else {
-            this.setState({ [event.target.name]: event.target.value })
-        }
+        // Update username and password
+        this.setState({ [event.target.name]: event.target.value })
         //console.log("New State, ", this.state);
     }
 
