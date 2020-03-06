@@ -155,7 +155,6 @@ class CustomCesium extends React.Component {
               <p>RealtorId: {booking.realtorId}</p>
               <p>Booking Privacy: {booking.bookingPrivacy}</p>
               <p>Booking Status: {booking.bookingStatus}</p>
-              <p> Tags: {booking.tags}</p>
               <p>Rooms:</p> <table> <tr><th>Room Name</th> <th># Photos</th> <th>Videos?</th></tr>
               {booking.rooms.map((row) => (
                 <tr>
