@@ -25,6 +25,7 @@ class LogInScreen extends React.Component {
             // Password
         }
         this.typeName = "Null";
+        this.errorMessage = "";
 
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -32,7 +33,7 @@ class LogInScreen extends React.Component {
     }
 
     componentDidMount() {
-
+        this.errorMessage = "";
     }
 
     handleChange = (event) => {
@@ -45,8 +46,11 @@ class LogInScreen extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
         console.log("Submitting ", this.state);
+        console.log("Error Message: ", this.errorMessage);
 
-        fetch('http://localhost:8080/login', {
+        let currentComponent = this;
+
+         fetch('http://localhost:8080/login', {
             method: 'POST',
             body: JSON.stringify(this.state),
             headers: {
@@ -55,8 +59,10 @@ class LogInScreen extends React.Component {
         })
         .then(function(response) {
             //console.log("Response Status: " + response.status);
+            //console.log("Error message is: ", this.errorMessage);
             if (response.status >= 400) {
                 // Error
+                //this.errorMessage = "ERROR";
                 return response.text();
             } else {
                 // On Success, Go to Map Screen
@@ -68,11 +74,17 @@ class LogInScreen extends React.Component {
             }
             return response.json();
         }).then(function(data) {
+            //this.errorMessage = data;
+            currentComponent.errorMessage = data;
+            currentComponent.setState({["email"]: currentComponent.state.email});
             console.log("Data:", data);
+            return data;
         }).catch((err) => {
             console.log("Errors: ", err.response);
         });
-        //console.log("Submitted.");
+
+        console.log("Submitted.");
+        console.log("Error Message: ", this.errorMessage);
     }
 
     renderField(labelName, fieldName, inputType) {
@@ -84,6 +96,7 @@ class LogInScreen extends React.Component {
         )
     }
 
+
     render() {
         return (
             <div class="mainCenterDiv">
@@ -92,6 +105,8 @@ class LogInScreen extends React.Component {
                     <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
                         {this.renderField("Email", "email", "email")}
                         {this.renderField("Password", "password", "password")}
+                        
+                        <span class="errorMessage">{this.errorMessage}</span>
                         <br/>
                         <button class="button fullWidth ">Log In</button>
                         <button onClick={this.signUpScreen} class="button fullWidth ">Register</button>

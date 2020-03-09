@@ -62,6 +62,8 @@ class SignUpScreenRegistration extends React.Component {
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+
+        this.errorMessage = "";
     }
 
     componentDidMount() {
@@ -92,6 +94,8 @@ class SignUpScreenRegistration extends React.Component {
         event.preventDefault();
         console.log("Submitting ", this.state);
 
+        let currentComponent = this;
+
         fetch('http://localhost:8080/users', {
             method: 'POST',
             body: JSON.stringify(this.state),
@@ -111,6 +115,8 @@ class SignUpScreenRegistration extends React.Component {
             }
             return response.json();
         }).then(function(data) {
+             currentComponent.errorMessage = data;
+             currentComponent.setState({["email"]: currentComponent.state.email});
             console.log("Data:", data);
         }).catch((err) => {
             console.log("Errors: ", err.response);
@@ -141,6 +147,8 @@ class SignUpScreenRegistration extends React.Component {
                         {this.renderField("Email", "email", "email")}
                         {this.renderField("Password", "password1", "password")}
                         {this.renderField("Confirm Password", "password2", "password")}
+                        <br/>
+                        <span class="errorMessage">{this.errorMessage}</span>
                         <br/>
                         <button class="button fullWidth ">Register</button>
                         <button onClick={this.cancelRegistration} class="button fullWidth ">Cancel</button>

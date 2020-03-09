@@ -45,3 +45,7 @@ h1, h2 {
     margin-bottom: 10px;
     width: 95.5%;
 }
+
+.errorMessage {
+    color: red;
+}
