@@ -23,17 +23,22 @@ h1, h2 {
     margin:auto;
 }
 
-.button {
+.subCenterDivHalf {
+    width: 50%;
+    display:inline-block;
+}
+
+.row {
+    display: flex;
+}
+
+.button, .textbox {
     padding: 10px;
     display: inline-block;
     background-color: #445262;
     border-color: #d7bd84;  
     color: #d7bd84;  
     margin-bottom: 10px;
-}
-
-.fullWidth {
-    width: 100%;
 }
 
 .inputText{
@@ -44,6 +49,11 @@ h1, h2 {
     padding: 10px;
     margin-bottom: 10px;
     width: 95.5%;
+    resize: vertical;
+}
+
+.fullWidth {
+    width: 100%;
 }
 
 .errorMessage {

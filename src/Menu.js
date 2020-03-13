@@ -2,8 +2,9 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import SignUpScreen from './SignUpScreen'
-import LogInScreen from './LogInScreen'
+import SignUpScreen from './SignUpScreen';
+import LogInScreen from './LogInScreen';
+import Dashboard from './Dashboard';
 import ReactDOM from 'react-dom';
 
 export default function SimpleMenu() {
@@ -29,6 +30,10 @@ export default function SimpleMenu() {
     ReactDOM.render(<LogInScreen/>, document.getElementById('application'));
   }
   
+  const dashboard = () => {
+    ReactDOM.render(<Dashboard/>, document.getElementById('application'));
+  }
+
   const buttonStyle = {zIndex:999, backgroundColor:'white', top : '10px', left: '10px'}
   const MenuStyle = {zIndex:999}
 
@@ -45,7 +50,7 @@ export default function SimpleMenu() {
         onClose={handleClose}
         style = {MenuStyle}
       >
-        <MenuItem onClick={handleClose}>Dashboard</MenuItem>
+        <MenuItem onClick={dashboard}>Dashboard</MenuItem>
         <MenuItem onClick={logOut}>Logout</MenuItem>
         {/* <MenuItem onClick={signUpScreen}>Sign Up</MenuItem>
         <MenuItem onClick={logInScreen}>Log In</MenuItem> */}
