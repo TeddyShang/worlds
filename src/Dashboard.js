@@ -14,6 +14,13 @@ class DashboardScreen extends React.Component {
             // Professional Experience
         }
 
+        this.editMode = false;
+
+        this.clickEdit = this.clickEdit.bind(this);
+        this.clickSave = this.clickSave.bind(this);
+        this.renderEditButton = this.renderEditButton.bind(this);
+
+        this.renderProfileField = this.renderProfileField.bind(this);
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -54,18 +61,49 @@ class DashboardScreen extends React.Component {
     }
 
     renderProfileField(labelName, fieldName) {
-        return (
-            <div>
-                <label>{labelName}</label>
-                <textarea class="inputText" readonly name={fieldName}>hello</textarea>
-            </div>
-        )
+        if (this.editMode) {
+            return (
+                <div>
+                    <label>{labelName}</label>
+                    <textarea class="inputText" name={fieldName}>helloEdit</textarea>
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <label>{labelName}</label>
+                    <textarea class="inputText" name={fieldName} readonly="">hello</textarea>
+                </div>
+            )
+        }
+        
     }
 
     renderBookingDetail(location) {
         return (
             <div class="dashboardBookingBox">Location: {location}</div>
         )
+    }
+
+    clickEdit = () => {
+        this.editMode = true;
+        this.setState({ state: this.state });
+    }
+    clickSave = () =>  {
+        this.editMode = false;
+        this.setState({ state: this.state });
+    }
+
+    renderEditButton = () => {
+        if (!this.editMode) {
+            return (
+                <button class="button fullWidth " onClick={this.clickEdit}>Edit</button>
+            )
+        } else {
+            return (
+                <button class="button fullWidth " onClick={this.clickSave}>Save</button>
+            )
+        }
     }
 
 
@@ -80,7 +118,7 @@ class DashboardScreen extends React.Component {
                         {this.renderProfileField("About Me", "about")}
                         {this.renderProfileField("Professional Experience", "experience")}
                         <br/>
-                        <button class="button fullWidth ">Edit</button>
+                        {this.renderEditButton()}
                     </div>
                     <div class="subCenterDivHalf">
                         <h2>My Bookings</h2>
