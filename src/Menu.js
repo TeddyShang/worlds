@@ -27,7 +27,7 @@ export default function SimpleMenu() {
 
   const logOut = () => {
     sessionStorage.removeItem("logged_in");
-    ReactDOM.render(<LogInScreen/>, document.getElementById('application'));
+    ReactDOM.render(<LogInScreen/>, document.getElementById('root'));
   }
   
   const dashboard = () => {

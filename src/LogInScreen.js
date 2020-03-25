@@ -15,7 +15,7 @@ const RegisType = {
 
 class LogInScreen extends React.Component {
     signUpScreen = () => {
-        ReactDOM.render(<SignUpScreen/>, document.getElementById('application'));
+        ReactDOM.render(<SignUpScreen/>, document.getElementById('root'));
     };
 
     constructor() {
@@ -109,8 +109,8 @@ class LogInScreen extends React.Component {
                         <span class="errorMessage">{this.errorMessage}</span>
                         <br/>
                         <button class="button fullWidth ">Log In</button>
-                        <button onClick={this.signUpScreen} class="button fullWidth ">Register</button>
                     </form>
+                    <button onClick={this.signUpScreen} class="button fullWidth ">Register</button>
                 </div>
             </div>
         )

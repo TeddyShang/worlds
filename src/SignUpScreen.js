@@ -16,10 +16,10 @@ const RegisType = {
 class SignUpScreen extends React.Component {
 
     goToRegistrationRealtor = () => {
-        ReactDOM.render(<SignUpScreenRegistration type={RegisType.REALTOR}/>, document.getElementById('application'));
+        ReactDOM.render(<SignUpScreenRegistration type={RegisType.REALTOR}/>, document.getElementById('root'));
     }
     goToRegistrationContentCreator = () => {
-        ReactDOM.render(<SignUpScreenRegistration type={RegisType.CONTENT_CREATOR}/>, document.getElementById('application'));
+        ReactDOM.render(<SignUpScreenRegistration type={RegisType.CONTENT_CREATOR}/>, document.getElementById('root'));
     }
 
 
@@ -41,7 +41,7 @@ export default SignUpScreen;
 class SignUpScreenRegistration extends React.Component {
 
     cancelRegistration = () => {
-        ReactDOM.render(<LogInScreen/>, document.getElementById('application'));
+        ReactDOM.render(<LogInScreen/>, document.getElementById('root'));
     }
 
     constructor() {
@@ -49,10 +49,11 @@ class SignUpScreenRegistration extends React.Component {
         this.state = {
             firstName: "",
             lastName: "",
-            userType: RegisType.REALTOR,    // Number [0/1/2]
+            userType: 0,    // Number [0/1/2]
             hashedPassword: "",             // Not actually hashed. Will be hashed on server
             email:    "",
-            realtorId: ""
+            realtorId: "",
+            approvalText: ""
         }
         this.typeName = "Null";
         // Used to verify both fields are the same
@@ -69,7 +70,7 @@ class SignUpScreenRegistration extends React.Component {
     componentDidMount() {
         var type = this.props.type;
         this.setState({
-            type: type,
+            userType: type,
         })
         this.typeName = type == 0 ? "Staff" : type == 1 ? "Realtor" :"Content Creator";
     }
@@ -108,10 +109,8 @@ class SignUpScreenRegistration extends React.Component {
             if (response.status >= 400) {
                 return response.text();
             } else {
-                // Go to Map Screen
-                ReactDOM.render(<Menu />, document.getElementById('root'));
-                var customCesium = ReactDOM.render(<CustomCesium/>, document.getElementById('application'));
-                customCesium.addListener();
+                // Go to Login Screen
+                ReactDOM.render(<LogInScreen></LogInScreen>, document.getElementById('root'));
             }
             return response.json();
         }).then(function(data) {
@@ -134,27 +133,52 @@ class SignUpScreenRegistration extends React.Component {
     }
 
     render() {
-        return (
-            <div class="mainCenterDiv">
-                <h1>iVue Real Estate Sign Up</h1>
-                <div class="subCenterDiv">
-                    <h2>Sign up as a {this.typeName}</h2>
-                    <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
-                        {this.renderField("First Name", "firstName", "text")}
-                        {this.renderField("Last Name", "lastName", "text")}
-
-                        {this.renderField("Realtor ID", "realtorID", "text")}
-                        {this.renderField("Email", "email", "email")}
-                        {this.renderField("Password", "password1", "password")}
-                        {this.renderField("Confirm Password", "password2", "password")}
-                        <br/>
-                        <span class="errorMessage">{this.errorMessage}</span>
-                        <br/>
-                        <button class="button fullWidth ">Register</button>
+        var state = this.state;
+        if (state.userType == RegisType.REALTOR) {
+            return (
+                <div class="mainCenterDiv">
+                    <h1>iVue Real Estate Sign Up</h1>
+                    <div class="subCenterDiv">
+                        <h2>Sign up as a {this.typeName}</h2>
+                        <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
+                            {this.renderField("First Name", "firstName", "text")}
+                            {this.renderField("Last Name", "lastName", "text")}
+                            {this.renderField("Realtor ID", "realtorID", "text")}
+                            {this.renderField("Email", "email", "email")}
+                            {this.renderField("Password", "password1", "password")}
+                            {this.renderField("Confirm Password", "password2", "password")}
+                            <br />
+                            <span class="errorMessage">{this.errorMessage}</span>
+                            <br />
+                            <button class="button fullWidth ">Register</button>
+                        </form>
                         <button onClick={this.cancelRegistration} class="button fullWidth ">Cancel</button>
-                    </form>
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        } else {
+            return (
+                <div class="mainCenterDiv">
+                    <h1>iVue Real Estate Sign Up</h1>
+                    <div class="subCenterDiv">
+                        <h2>Sign up as a {this.typeName}</h2>
+                        <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
+                            {this.renderField("First Name", "firstName", "text")}
+                            {this.renderField("Last Name", "lastName", "text")}
+                            {this.renderField("Email", "email", "email")}
+                            {this.renderField("Password", "password1", "password")}
+                            {this.renderField("Confirm Password", "password2", "password")}
+                            {this.renderField("Free text field to enter credentials (portfolio links, equipment specs, etc.) Enter sufficient detail to be approved.", "approvalText", "text")}
+                            <br />
+                            <span class="errorMessage">{this.errorMessage}</span>
+                            <br />
+                            <button class="button fullWidth ">Register</button>
+                        </form>
+                        <button onClick={this.cancelRegistration} class="button fullWidth ">Cancel</button>
+                    </div>
+                </div>
+            )
+        }
+
     };
 }
