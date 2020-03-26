@@ -4,6 +4,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import SignUpScreen from './SignUpScreen';
 import LogInScreen from './LogInScreen';
+import BookingDetail from './BookingDetail';
 import Dashboard from './Dashboard';
 import ReactDOM from 'react-dom';
 
@@ -29,6 +30,10 @@ export default function SimpleMenu() {
     sessionStorage.removeItem("logged_in");
     ReactDOM.render(<LogInScreen/>, document.getElementById('root'));
   }
+
+  const bookingdetail = () => {
+    ReactDOM.render(<BookingDetail/>, document.getElementById('application'));
+  }
   
   const dashboard = () => {
     ReactDOM.render(<Dashboard/>, document.getElementById('application'));
@@ -51,6 +56,7 @@ export default function SimpleMenu() {
         style = {MenuStyle}
       >
         <MenuItem onClick={dashboard}>Dashboard</MenuItem>
+        <MenuItem onClick={bookingdetail}>BookingDetail</MenuItem>
         <MenuItem onClick={logOut}>Logout</MenuItem>
         {/* <MenuItem onClick={signUpScreen}>Sign Up</MenuItem>
         <MenuItem onClick={logInScreen}>Log In</MenuItem> */}
