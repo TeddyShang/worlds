@@ -50,6 +50,9 @@ class LogInScreen extends React.Component {
 
         let currentComponent = this;
 
+        //new
+        let errorStatus = null;
+
          fetch('http://localhost:8080/login', {
             method: 'POST',
             body: JSON.stringify(this.state),
@@ -61,24 +64,30 @@ class LogInScreen extends React.Component {
             //console.log("Response Status: " + response.status);
             //console.log("Error message is: ", this.errorMessage);
             if (response.status >= 400) {
+                errorStatus = true;
                 // Error
                 //this.errorMessage = "ERROR";
                 return response.text();
             } else {
+                errorStatus = false;
+                return response.json();
+
+            }
+        }).then(function (data) {
+            if (errorStatus) {
+                //this.errorMessage = data;
+                currentComponent.errorMessage = data;
+                currentComponent.setState({ ["email"]: currentComponent.state.email });
+                console.log("Data:", data);
+                return data;
+            } else {
                 // On Success, Go to Map Screen
                 sessionStorage.setItem("logged_in", true);
-                sessionStorage.setItem("current_user", response.text());
+                sessionStorage.setItem("current_user", JSON.stringify(data));
                 ReactDOM.render(<Menu />, document.getElementById('root'));
-                var customCesium = ReactDOM.render(<CustomCesium/>, document.getElementById('application'));
+                var customCesium = ReactDOM.render(<CustomCesium />, document.getElementById('application'));
                 customCesium.addListener();
-            }
-            return response.json();
-        }).then(function(data) {
-            //this.errorMessage = data;
-            currentComponent.errorMessage = data;
-            currentComponent.setState({["email"]: currentComponent.state.email});
-            console.log("Data:", data);
-            return data;
+            }    
         }).catch((err) => {
             console.log("Errors: ", err.response);
         });
