@@ -15,6 +15,7 @@ class DashboardScreen extends React.Component {
         }
 
         this.editMode = false;
+        this.bookings = null;
 
         this.clickEdit = this.clickEdit.bind(this);
         this.clickSave = this.clickSave.bind(this);
@@ -27,6 +28,23 @@ class DashboardScreen extends React.Component {
     }
 
     componentDidMount() {
+        // Retrieve all bookings
+        var user = JSON.parse(sessionStorage.getItem("current_user")); //This will be the full json document of the user that is logged in
+        let currentComponent = this;
+        var userLink = user._links.self.href;
+        console.log("Current user is ", user);
+        console.log("userLink is ", userLink);
+        fetch(userLink + '/bookings', {
+            method: 'GET'
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data){
+                currentComponent.bookings = data._embedded.bookings;
+                currentComponent.setState({ state: currentComponent.state });
+                console.log("Bookings: ", currentComponent.bookings);
+        });
     }
 
     handleChange = (event) => {
@@ -79,10 +97,27 @@ class DashboardScreen extends React.Component {
         
     }
 
-    renderBookingDetail(location) {
+    renderBookingDetail(booking) {
         return (
-            <div class="dashboardBookingBox">Location: {location}</div>
+            <div class="dashboardBookingBox">
+                Status: {booking.bookingStatus} <br/>
+                Address: {booking.address} <br/>
+                Date Requested: {booking.dateRequested} <br/>
+            </div>
         )
+    }
+
+    renderBookingDetailList() {
+        if (this.bookings == null) {
+            return (<div class="dashboardBookingBox">There are no bookings</div>);
+        } else {
+            var result = [];
+            for (var i = 0; i < this.bookings.length; i++) {
+                var booking = this.bookings[i];
+                result.push(this.renderBookingDetail(booking));
+            }
+            return result;
+        }
     }
 
     clickEdit = () => {
@@ -122,20 +157,7 @@ class DashboardScreen extends React.Component {
                     </div>
                     <div class="subCenterDivHalf">
                         <h2>My Bookings</h2>
-                        {this.renderBookingDetail("My House") }
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
-                        {this.renderBookingDetail("My School")}
+                        {this.renderBookingDetailList() }
                     </div>
                 </div>
             </div>
