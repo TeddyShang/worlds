@@ -22,6 +22,8 @@ class DashboardScreen extends React.Component {
         this.bookings = null;
         this.userProfile = null;
         this.profileId = undefined;
+        this.profilePicToUpload = null;
+        this.urlToRenderedProfilePic = null; // For when you select an image to upload
 
         this.clickEdit = this.clickEdit.bind(this);
         this.clickSave = this.clickSave.bind(this);
@@ -38,6 +40,8 @@ class DashboardScreen extends React.Component {
         let currentComponent = this;
         var userLink = user._links.self.href;
         this.profileId = user.profileId;
+
+        console.log("User is: ", user);
 
 
         // Retrieve all bookings
@@ -62,8 +66,10 @@ class DashboardScreen extends React.Component {
         })
         .then(function(data){
             currentComponent.userProfile = data;
+            // Grabbing the data from server and updating front end
             currentComponent.setState({ aboutMe: data.aboutMe });
             currentComponent.setState({ professionalExperience: data.professionalExperience });
+            currentComponent.setState({ urlToProfilePicture: data.urlToProfilePicture });
             console.log("UserProfile: ", currentComponent.userProfile);
         });
     }
@@ -74,37 +80,51 @@ class DashboardScreen extends React.Component {
             this.setState({ [event.target.name]: event.target.value })
             console.log("New State, ", this.state);
         }
+
+        if (event.target.name == "urlToProfilePicture") {
+            console.log("New Image: ", event.target.files[0]);
+            this.profilePicToUpload = event.target.files[0];
+            this.urlToRenderedProfilePic = URL.createObjectURL(this.profilePicToUpload);
+
+            this.setState({ state: this.state }); // Changing state for url comes later when we submit
+
+            console.log("urlToRenderedProfilePic: ", this.urlToRenderedProfilePic);
+        }
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
 
         let currentComponent = this;
-        console.log("Submitting State: ", this.state);
+        
+        // Upload picture to AWS
+        this.uploadProfilePic()
+        .then(() => {
 
-        console.log('http://localhost:8080/userprofiles/' + this.profileId);
+            // Submitting State to User Profiles
+            fetch('http://localhost:8080/userprofiles/' + this.profileId, {
+                method: 'PUT',
+                body: JSON.stringify(this.state),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function(response) {
+                if (response.status >= 400) {
+                    // Error
+                    console.log("Failure.")
+                } else {
+                    // On Success
+                    console.log("Success!")
+                }
+                return response.json();
+            }).then(function(data) {
+                return data;
+            }).catch((err) => {
+                console.log("Errors: ", err.response);
+            });
 
-         fetch('http://localhost:8080/userprofiles/' + this.profileId, {
-            method: 'PUT',
-            body: JSON.stringify(this.state),
-            headers: {
-                'Content-Type': 'application/json'
-            }
         })
-        .then(function(response) {
-            if (response.status >= 400) {
-                // Error
-                console.log("Failure.")
-            } else {
-                // On Success
-                console.log("Success!")
-            }
-            return response.json();
-        }).then(function(data) {
-            return data;
-        }).catch((err) => {
-            console.log("Errors: ", err.response);
-        });
     }
 
     renderProfileField(labelName, fieldName) {
@@ -171,6 +191,49 @@ class DashboardScreen extends React.Component {
         }
     }
 
+    uploadProfilePic = () => {
+        //submit to AWS (the file)
+        var baseUrl = 'https://worlds-media.s3.amazonaws.com/';
+        let AWSresponse;
+        var finalKey = "ProfilePictures/" + this.profileId + "/" + this.profilePicToUpload.name;
+        let finalURL = baseUrl + finalKey;
+        const formData = new FormData();
+        formData.append('key', finalKey);
+        formData.append('file', this.profilePicToUpload);
+
+        return fetch(baseUrl, {
+            method: 'POST',
+            body: formData
+        }).then((response) => {
+            if (response.status == 204) {
+                console.log("Uploaded Profile Picture Succesfully!");
+                this.state.urlToProfilePicture = finalURL;
+            }
+        })
+        .catch(error => {
+            console.log("Errors: ", error.response);
+        });
+    }
+
+    renderProfilePic = () => {
+        var url = "https://faceswaponline.com/wp-content/uploads/2019/12/DonkeyClinton-496a0ef1ecec9f4086480d722d3454d6.jpg";
+        if (this.urlToRenderedProfilePic != null)
+            url = this.urlToRenderedProfilePic;
+        else if (this.state.urlToProfilePicture != "")
+            url = this.state.urlToProfilePicture;
+        var result = [];
+        
+        if (this.editMode) {
+            result.push(<img id="profilePic" class = "profilePicWithButton" src={url}></img>)
+            //result.push(<input class="button fullWidth" id="profilePicButton" onClick={this.uploadProfilePic} type="file">Upload Profile Picture</input>);
+            result.push(<label class="profilePicLabel button" for="profilePicButton">Upload Profile Picture (PNG, JPG)</label>);
+            result.push(<input  id="profilePicButton" name="urlToProfilePicture" accept="image/*" type="file"/>);
+        } else {
+            result.push(<img id="profilePic" src={url}></img>)
+        }
+        return result;
+    }
+
 
     render() {
         return (
@@ -178,9 +241,9 @@ class DashboardScreen extends React.Component {
                 <h1>iVue Dashboard</h1>
                 <div class="row">
                     <div class="subCenterDivHalf">
-                        <img id="profilePic" src="https://faceswaponline.com/wp-content/uploads/2019/12/DonkeyClinton-496a0ef1ecec9f4086480d722d3454d6.jpg"></img>
-                        <br/><br/>
                         <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
+                            {this.renderProfilePic()}
+                            <br/><br/>
                             {this.renderProfileField("About Me", "aboutMe")}
                             {this.renderProfileField("Professional Experience", "professionalExperience")}
                             <br/>

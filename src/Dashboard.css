@@ -11,3 +11,22 @@
 #profilePic {
     width:100%;
 }
+
+.profilePicWithButton {
+    margin-bottom: -40px;
+}
+
+#profilePicButton {
+    margin-bottom: 0px;
+    position: absolute;
+    scale: 0;
+    
+}
+
+.profilePicLabel {
+    border: 2px solid;
+    width: 94%;
+    margin-bottom:0px !important;
+    text-align: center;
+    font-size: 14px;
+}
