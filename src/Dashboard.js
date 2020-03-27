@@ -192,6 +192,11 @@ class DashboardScreen extends React.Component {
     }
 
     uploadProfilePic = () => {
+        if (this.profilePicToUpload == null)
+            return new Promise(resolve => {
+                  resolve('resolved');
+            });
+
         //submit to AWS (the file)
         var baseUrl = 'https://worlds-media.s3.amazonaws.com/';
         let AWSresponse;
