@@ -23,10 +23,6 @@ export default function SimpleMenu() {
     sessionStorage.removeItem("logged_in");
     ReactDOM.render(<LogInScreen/>, document.getElementById('root'));
   }
-
-  const bookingdetail = () => {
-    ReactDOM.render(<BookingDetail/>, document.getElementById('application'));
-  }
   
   const dashboard = () => {
     ReactDOM.render(<Dashboard/>, document.getElementById('application'));
@@ -57,7 +53,6 @@ export default function SimpleMenu() {
       >
         <MenuItem onClick={globe}>Globe View</MenuItem>
         <MenuItem onClick={dashboard}>Dashboard</MenuItem>
-        <MenuItem onClick={bookingdetail}>BookingDetail</MenuItem>
         <MenuItem onClick={logOut}>Logout</MenuItem>
       </Menu>
       <div id = "application"></div>
