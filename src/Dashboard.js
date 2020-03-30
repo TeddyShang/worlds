@@ -1,9 +1,8 @@
 import React from 'react';
-import { thisExpression } from '@babel/types';
 import ReactDOM from 'react-dom';
 import './index.css';
-import './Dashboard.css'
-import Menu from './Menu'
+import './Dashboard.css';
+import BookingDetail from './BookingDetail';
 
 class DashboardScreen extends React.Component {
 
@@ -33,6 +32,7 @@ class DashboardScreen extends React.Component {
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.bookingDetail = this.bookingDetail.bind(this);
     }
 
     componentDidMount() {
@@ -146,13 +146,21 @@ class DashboardScreen extends React.Component {
         
     }
 
+    bookingDetail(booking) {
+        //We should launch the booking detail page
+        var booking = booking;
+        ReactDOM.render(<BookingDetail booking = {booking}></BookingDetail>, document.getElementById('application'));
+    }
+
+
     renderBookingDetail(booking) {
         return (
-            <div class="dashboardBookingBox">
+            <div class="dashboardBookingBox" onClick={this.bookingDetail.bind(this, booking)}>
                 Status: {booking.bookingStatus} <br/>
                 Address: {booking.address} <br/>
                 Date Requested: {booking.dateRequested} <br/>
             </div>
+    
         )
     }
 

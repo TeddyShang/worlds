@@ -2,11 +2,11 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import SignUpScreen from './SignUpScreen';
 import LogInScreen from './LogInScreen';
 import BookingDetail from './BookingDetail';
 import Dashboard from './Dashboard';
 import ReactDOM from 'react-dom';
+import CustomCesium from './CustomCesium';
 
 export default function SimpleMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -19,13 +19,6 @@ export default function SimpleMenu() {
     setAnchorEl(null);
   };
 
-  // const signUpScreen = () => {
-  //   ReactDOM.render(<SignUpScreen/>, document.getElementById('application'));
-  // };
-  // const logInScreen = () => {
-  //   ReactDOM.render(<LogInScreen/>, document.getElementById('application'));
-  // };
-
   const logOut = () => {
     sessionStorage.removeItem("logged_in");
     ReactDOM.render(<LogInScreen/>, document.getElementById('root'));
@@ -37,6 +30,13 @@ export default function SimpleMenu() {
   
   const dashboard = () => {
     ReactDOM.render(<Dashboard/>, document.getElementById('application'));
+  }
+
+  const globe = () => {
+    ReactDOM.unmountComponentAtNode(document.getElementById('root'));
+    ReactDOM.render(<SimpleMenu />, document.getElementById('root'));
+    var customCesium = ReactDOM.render(<CustomCesium/>, document.getElementById('application'));
+    customCesium.addListener();
   }
 
   const buttonStyle = {zIndex:999, backgroundColor:'white', top : '10px', left: '10px'}
@@ -55,11 +55,10 @@ export default function SimpleMenu() {
         onClose={handleClose}
         style = {MenuStyle}
       >
+        <MenuItem onClick={globe}>Globe View</MenuItem>
         <MenuItem onClick={dashboard}>Dashboard</MenuItem>
         <MenuItem onClick={bookingdetail}>BookingDetail</MenuItem>
         <MenuItem onClick={logOut}>Logout</MenuItem>
-        {/* <MenuItem onClick={signUpScreen}>Sign Up</MenuItem>
-        <MenuItem onClick={logInScreen}>Log In</MenuItem> */}
       </Menu>
       <div id = "application"></div>
       <div id = "booking"></div>
@@ -67,4 +66,3 @@ export default function SimpleMenu() {
     
   );
 }
-//ReactDOM.render(<SimpleMenu />, document.getElementById('root'));
