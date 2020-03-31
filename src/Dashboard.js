@@ -247,7 +247,6 @@ class DashboardScreen extends React.Component {
         return result;
     }
 
-
     render() {
         return (
             <div class="mainCenterDiv">

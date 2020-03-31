@@ -145,7 +145,8 @@ class Upload extends React.Component{
                     "bookingStatus": booking.bookingStatus,
                     "deletedBooking":booking.deletedBooking,
                     "creatorId": booking.creatorId,
-                    "mediaIdsByRoom":  mediaIdsByRoom
+                    "mediaIdsByRoom":  mediaIdsByRoom,
+                    "dateCompleted": booking.dateCompleted
                 }
                 fetch('http://localhost:8080/bookings/' + bookingId, {
                     method: 'PUT',

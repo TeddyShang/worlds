@@ -24,6 +24,8 @@ class BookingDetail extends React.Component {
         }
         this.refresh = this.refresh.bind(this);
         this.creatorComplete = this.creatorComplete.bind(this);
+        this.realtorCancel = this.realtorCancel.bind(this);
+        this.realtorConfirm = this.realtorConfirm.bind(this);
     }
 
     componentDidMount() {
@@ -111,28 +113,29 @@ class BookingDetail extends React.Component {
         })
     }
 
-    refresh(){
+    refresh() {
         let currentComponent = this;
         fetch(this.state.booking._links.self.href, {
             method: 'GET'
         })
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(data){
-            currentComponent.setState({booking: data});
-        });
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                currentComponent.setState({ booking: data });
+            });
     }
 
     //Set the booking as tentatively complete, set to complete once realtor verifies
-    creatorComplete(){
+    creatorComplete() {
         let currentComponent = this;
-        var booking =  currentComponent.state.booking;
+        var booking = currentComponent.state.booking;
         var bookingLink = booking._links.self.href;
         var finalBookingBody = {
             "mediaIds": booking.mediaIds,
             "dateCreated": booking.dateCreated,
             "dateRequested": booking.dateRequested,
+            "dateCompleted": booking.dateCompleted,
             "realtorId": booking.realtorId,
             "locationCoordinates": booking.locationCoordinates,
             "address": booking.address,
@@ -150,12 +153,89 @@ class BookingDetail extends React.Component {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(function(response) {
+        }).then(function (response) {
             return response.json()
-        }).then(function(data){
+        }).then(function (data) {
             currentComponent.setState({
-                booking:data,
+                booking: data,
                 bookingStatus: "TENTATIVE"
+            });
+        })
+    }
+    //Set the booking as cancelled
+    realtorCancel() {
+        let currentComponent = this;
+        var booking = currentComponent.state.booking;
+        var bookingLink = booking._links.self.href;
+        var finalBookingBody = {
+            "mediaIds": booking.mediaIds,
+            "dateCreated": booking.dateCreated,
+            "dateRequested": booking.dateRequested,
+            "dateCompleted": booking.dateCompleted,
+            "realtorId": booking.realtorId,
+            "locationCoordinates": booking.locationCoordinates,
+            "address": booking.address,
+            "tags": booking.tags,
+            "rooms": booking.rooms,
+            "bookingPrivacy": booking.bookingPrivacy,
+            "bookingStatus": "CANCELLED",
+            "deletedBooking": booking.deletedBooking,
+            "creatorId": booking.creatorId,
+            "mediaIdsByRoom": booking.mediaIdsByRoom
+        }
+        fetch(bookingLink, {
+            method: 'PUT',
+            body: JSON.stringify(finalBookingBody),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function (response) {
+            return response.json()
+        }).then(function (data) {
+            currentComponent.setState({
+                booking: data,
+                bookingStatus: "CANCELLED"
+            });
+        })
+    }
+    //Set the booking as completed, also mark the time completed
+    realtorConfirm() {
+        let currentComponent = this;
+        var booking = currentComponent.state.booking;
+        var bookingLink = booking._links.self.href;
+        var completedDate = Date.now();
+        var finalBookingBody = {
+            "mediaIds": booking.mediaIds,
+            "dateCreated": booking.dateCreated,
+            "dateRequested": booking.dateRequested,
+            "dateCompleted": completedDate,
+            "realtorId": booking.realtorId,
+            "locationCoordinates": booking.locationCoordinates,
+            "address": booking.address,
+            "tags": booking.tags,
+            "rooms": booking.rooms,
+            "bookingPrivacy": booking.bookingPrivacy,
+            "bookingStatus": "COMPLETED",
+            "deletedBooking": booking.deletedBooking,
+            "creatorId": booking.creatorId,
+            "mediaIdsByRoom": booking.mediaIdsByRoom
+        }
+        fetch(bookingLink, {
+            method: 'PUT',
+            body: JSON.stringify(finalBookingBody),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function (response) {
+            return response.json()
+        }).then(function (data) {
+            var dateCompleted = data.dateCompleted;
+            var date = new Date(dateCompleted);
+            dateCompleted = date.toLocaleDateString();
+            currentComponent.setState({
+                booking: data,
+                bookingStatus: "COMPLETED",
+                dateCompleted: dateCompleted
             });
         })
     }
@@ -197,10 +277,10 @@ class BookingDetail extends React.Component {
                                                 <td>{value[1]}</td>
                                                 <td>{value[2]}</td>
                                                 <td>
-                                                {<Upload creatorId={this.state.booking.creatorId} roomIndex={index} bookingInformation={this.state.booking}></Upload>}
+                                                    {<Upload creatorId={this.state.booking.creatorId} roomIndex={index} bookingInformation={this.state.booking}></Upload>}
                                                 </td>
                                                 <td>
-                                                    {<View roomIndex = {index} booking = {this.state.booking}></View>}
+                                                    {<View roomIndex={index} booking={this.state.booking}></View>}
                                                 </td>
                                             </tr>
                                         )
@@ -216,11 +296,11 @@ class BookingDetail extends React.Component {
                             {(this.state.booking.bookingStatus === "MATCHED") &&
                                 <button class="button fullWidth" onClick={this.creatorComplete} >Mark As Complete</button>
                             }
-                            <button onClick= {this.refresh} class="button fullWidth ">Refresh</button>
+                            <button onClick={this.refresh} class="button fullWidth ">Refresh</button>
                         </div>
                     </div>
                 </div>
-            ) 
+            )
 
         } else if (this.state.loaded && this.state.user.userType == "REALTOR") {
             return (
@@ -234,6 +314,7 @@ class BookingDetail extends React.Component {
                             <li>Date Created: {this.state.dateCreated}</li>
                             <li>Date Requested: {this.state.dateRequested}</li>
                             <li>Date Completed: {this.state.dateCompleted}</li>
+                            <li>Booking Status: {this.state.bookingStatus}</li>
                             <li>Address: {this.state.address}</li>
                             <li>Booking Privacy: {this.state.bookingPrivacy}</li>
                         </div>
@@ -255,7 +336,7 @@ class BookingDetail extends React.Component {
                                                 <td>{value[1]}</td>
                                                 <td>{value[2]}</td>
                                                 <td>
-                                                {<View roomIndex = {index} booking = {this.state.booking}></View>}
+                                                    {<View roomIndex={index} booking={this.state.booking}></View>}
                                                 </td>
 
                                             </tr>
@@ -266,8 +347,15 @@ class BookingDetail extends React.Component {
                                 </tbody>
 
                             </table>
+                            {(this.state.booking.bookingStatus === "PENDING") &&
+                                <button class="button fullWidth" onClick={this.realtorCancel} >Cancel Booking</button>
+                            }
                             <button class="button fullWidth ">Edit</button>
-                            <button onClick= {this.refresh} class="button fullWidth ">Refresh</button>
+                            {(this.state.booking.bookingStatus === "TENTATIVE") &&
+                                <button class="button fullWidth" onClick={this.realtorConfirm} >Confirm Booking is Complete</button>
+                            }
+                            <button onClick={this.refresh} class="button fullWidth ">Refresh</button>
+
                         </div>
                     </div>
                 </div>
