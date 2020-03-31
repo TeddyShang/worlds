@@ -2,7 +2,8 @@ import React from 'react';
 import './BaseIVueStyle.css';
 import ModalButton from './ModalBtn.js';
 import Modal from 'react-modal';
-
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from 'react-responsive-carousel';
 
 class View extends React.Component{
     constructor(props) {
@@ -111,14 +112,51 @@ class View extends React.Component{
                     <Modal isOpen={this.state.modalOpen} onRequestClose={this.hideModal} className={"bookingModal"}>
                         <div class="mainCenterDiv">
                             <h1>View Media of {this.state.booking.rooms[this.state.roomIndex][0]}</h1>
-                            {this.state.mediametadatas.map((value) => {
-                               return <p1>{value.urlToMedia}</p1>
-                            })}
+                            <div class="mainCenterDiv">
+                                <Carousel showThumbs={false} infiniteLoop={true}> 
+                                    {this.state.mediametadatas.map((value) => {
+                                        var temp = value.urlToMedia.split(".");
+                                        var filetype = temp[temp.length - 1];
+                                        if (filetype == "ogg") {
+                                            return (
+                                                <video width="700" height="500" src = {value.urlToMedia} controls>Your browser does not support .ogg video formats</video>
+                                            )
+                                            
+
+                                        } else if (filetype == "mp4") {
+                                            return (
+                                                <div>
+                                                    <video width="700" height="500" src = {value.urlToMedia} controls>Your browser does not support .mp4 video formats</video>
+                                                </div>
+                                                
+                                            )
+
+                                        } else if (filetype == "webm") {
+                                            return (
+                                                <video width="700" height="500" src = {value.urlToMedia} controls>Your browser does not support .webm video formats</video>
+                                            )
+
+                                        } else {
+                                            return (
+                                                <div>
+                                                    <img width="700" height="500" src={value.urlToMedia}></img>
+                                                </div>
+
+                                            )
+
+
+                                        }
+                                    })}
+                                </Carousel>
+
+                            </div>
+
+
                             <button onClick={this.hideModal}>Close Media Screen</button>
                         </div>
-    
+
                     </Modal>
-    
+
                 </React.Fragment>
             );
 

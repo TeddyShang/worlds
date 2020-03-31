@@ -6,8 +6,6 @@ import './BaseIVueStyle.css'
 import * as serviceWorker from './serviceWorker';
 import CustomCesium from './CustomCesium';
 import LogInScreen from './LogInScreen';
-import Upload from './Upload';
-import ProfilePictureUpload from './ProfilePictureUpload';
 
  var loggedIn = sessionStorage.getItem("logged_in");
  if (loggedIn) {
