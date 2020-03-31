@@ -78,6 +78,8 @@ class BookingDetail extends React.Component {
         //dateRequested is fine
         var dateRequested = booking.dateRequested;
 
+        var dateCompleted = booking.dateCompleted;
+
         //Convert dateCompleted to readable date/time
         if (dateCompleted == null || dateCompleted == "") {
             dateCompleted = "Not Completed Yet";
