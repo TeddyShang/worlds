@@ -1,6 +1,8 @@
 import React from 'react';
 import './index.css';
-import Menu from './Menu'
+import Menu from './Menu';
+import Upload from './Upload';
+import View from './View';
 
 class BookingDetail extends React.Component {
 
@@ -20,6 +22,7 @@ class BookingDetail extends React.Component {
             bookingStatus: null,
             currentUser: null
         }
+        this.refresh = this.refresh.bind(this);
     }
 
     componentDidMount() {
@@ -106,6 +109,19 @@ class BookingDetail extends React.Component {
             user: user
         })
     }
+    refresh(){
+        let currentComponent = this;
+        fetch(this.state.booking._links.self.href, {
+            method: 'GET'
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data){
+            currentComponent.setState({booking: data});
+        });
+    }
+
 
     render() {
         if (this.state.loaded && (this.state.user.userType == "CREATOR" || this.state.user.userType == "STAFF")) {
@@ -125,32 +141,42 @@ class BookingDetail extends React.Component {
                         </div>
                         <div>
                             <table>
-                                <tr>
-                                    <th>Room Name</th>
-                                    <th>Photos</th>
-                                    <th>Videos</th>
-                                    <th>Upload</th>
-                                    <th>View</th>
-                                </tr>
-                                {this.state.booking.rooms.map((value) => {
-                                    return (
-                                        <tr>
-                                            <td>{value[0]}</td>
-                                            <td>{value[1]}</td>
-                                            <td>{value[2]}</td>
-                                            <td><button>Upload</button></td>
-                                            <td><button>View</button></td>
+                                <thead>
+                                    <tr>
+                                        <th>Room Name</th>
+                                        <th>Photos</th>
+                                        <th>Videos</th>
+                                        <th>Upload</th>
+                                        <th>View</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {this.state.booking.rooms.map((value, index) => {
+                                        return (
+                                            <tr>
+                                                <td>{value[0]}</td>
+                                                <td>{value[1]}</td>
+                                                <td>{value[2]}</td>
+                                                <td>
+                                                {<Upload creatorId={this.state.booking.creatorId} roomIndex={index} bookingInformation={this.state.booking}></Upload>}
+                                                </td>
+                                                <td>
+                                                    {<View roomIndex = {index} booking = {this.state.booking}></View>}
+                                                </td>
+                                            </tr>
+                                        )
 
-                                        </tr>
-                                    )
+                                    })}
+                                </tbody>
 
-                                })}
+
                             </table>
                             <button class="button fullWidth ">Edit</button>
+                            <button onClick= {this.refresh} class="button fullWidth ">Refresh</button>
                         </div>
                     </div>
                 </div>
-            )
+            ) 
 
         } else if (this.state.loaded && this.state.user.userType == "REALTOR") {
             return (
@@ -169,26 +195,35 @@ class BookingDetail extends React.Component {
                         </div>
                         <div>
                             <table>
-                                <tr>
-                                    <th>Room Name</th>
-                                    <th>Photos</th>
-                                    <th>Videos</th>
-                                    <th>View</th>
-                                </tr>
-                                {this.state.booking.rooms.map((value) => {
-                                    return (
-                                        <tr>
-                                            <td>{value[0]}</td>
-                                            <td>{value[1]}</td>
-                                            <td>{value[2]}</td>
-                                            <td><button>View</button></td>
+                                <thead>
+                                    <tr>
+                                        <th>Room Name</th>
+                                        <th>Photos</th>
+                                        <th>Videos</th>
+                                        <th>View</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {this.state.booking.rooms.map((value, index) => {
+                                        return (
+                                            <tr>
+                                                <td>{value[0]}</td>
+                                                <td>{value[1]}</td>
+                                                <td>{value[2]}</td>
+                                                <td>
+                                                {<View roomIndex = {index} booking = {this.state.booking}></View>}
+                                                </td>
 
-                                        </tr>
-                                    )
+                                            </tr>
+                                        )
 
-                                })}
+                                    })}
+
+                                </tbody>
+
                             </table>
                             <button class="button fullWidth ">Edit</button>
+                            <button onClick= {this.refresh} class="button fullWidth ">Refresh</button>
                         </div>
                     </div>
                 </div>

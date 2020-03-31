@@ -130,6 +130,8 @@ class Upload extends React.Component{
                 //Lastly, update the booking object
                 var mediaIds = booking.mediaIds;
                 mediaIds.push(mediametadataId);
+                var mediaIdsByRoom = booking.mediaIdsByRoom;
+                mediaIdsByRoom[this.state.roomIndex].push(mediametadataId);
                 var finalBookingBody = {
                     "mediaIds": mediaIds,
                     "dateCreated": booking.dateCreated ,
@@ -142,7 +144,8 @@ class Upload extends React.Component{
                     "bookingPrivacy": booking.bookingPrivacy,
                     "bookingStatus": booking.bookingStatus,
                     "deletedBooking":booking.deletedBooking,
-                    "creatorId": booking.creatorId  
+                    "creatorId": booking.creatorId,
+                    "mediaIdsByRoom":  mediaIdsByRoom
                 }
                 fetch('http://localhost:8080/bookings/' + bookingId, {
                     method: 'PUT',
@@ -159,10 +162,11 @@ class Upload extends React.Component{
             .catch(error => {
                 //handle error
             });
-
-
+            alert("Success! Media Uploaded to Cloud. We are now processing the data, please use the refresh button to view it");
+            this.setState({
+                modalOpen: false
+            })
     }
-
     render() {
         return (
             <React.Fragment>
