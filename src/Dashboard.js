@@ -229,7 +229,7 @@ class DashboardScreen extends React.Component {
     }
 
     renderProfilePic = () => {
-        var url = "https://faceswaponline.com/wp-content/uploads/2019/12/DonkeyClinton-496a0ef1ecec9f4086480d722d3454d6.jpg";
+        var url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
         if (this.urlToRenderedProfilePic != null)
             url = this.urlToRenderedProfilePic;
         else if (this.state.urlToProfilePicture != "")

@@ -119,39 +119,30 @@ class View extends React.Component{
                                         var filetype = temp[temp.length - 1];
                                         if (filetype == "ogg") {
                                             return (
-                                                <video width="700" height="500" src = {value.urlToMedia} controls>Your browser does not support .ogg video formats</video>
+                                                <video width="700" height="500" src={value.urlToMedia} controls>Your browser does not support .ogg video formats</video>
                                             )
-                                            
-
                                         } else if (filetype == "mp4") {
                                             return (
                                                 <div>
-                                                    <video width="700" height="500" src = {value.urlToMedia} controls>Your browser does not support .mp4 video formats</video>
+                                                    <video width="700" height="500" src={value.urlToMedia} controls>Your browser does not support .mp4 video formats</video>
                                                 </div>
-                                                
                                             )
-
                                         } else if (filetype == "webm") {
                                             return (
-                                                <video width="700" height="500" src = {value.urlToMedia} controls>Your browser does not support .webm video formats</video>
+                                                <video width="700" height="500" src={value.urlToMedia} controls>Your browser does not support .webm video formats</video>
                                             )
-
                                         } else {
                                             return (
                                                 <div>
                                                     <img width="700" height="500" src={value.urlToMedia}></img>
                                                 </div>
-
                                             )
-
-
                                         }
                                     })}
                                 </Carousel>
 
                             </div>
-
-
+                            
                             <button onClick={this.hideModal}>Close Media Screen</button>
                         </div>
 

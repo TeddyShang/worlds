@@ -23,6 +23,7 @@ class BookingDetail extends React.Component {
             currentUser: null
         }
         this.refresh = this.refresh.bind(this);
+        this.creatorComplete = this.creatorComplete.bind(this);
     }
 
     componentDidMount() {
@@ -109,6 +110,7 @@ class BookingDetail extends React.Component {
             user: user
         })
     }
+
     refresh(){
         let currentComponent = this;
         fetch(this.state.booking._links.self.href, {
@@ -120,6 +122,42 @@ class BookingDetail extends React.Component {
         .then(function(data){
             currentComponent.setState({booking: data});
         });
+    }
+
+    //Set the booking as tentatively complete, set to complete once realtor verifies
+    creatorComplete(){
+        let currentComponent = this;
+        var booking =  currentComponent.state.booking;
+        var bookingLink = booking._links.self.href;
+        var finalBookingBody = {
+            "mediaIds": booking.mediaIds,
+            "dateCreated": booking.dateCreated,
+            "dateRequested": booking.dateRequested,
+            "realtorId": booking.realtorId,
+            "locationCoordinates": booking.locationCoordinates,
+            "address": booking.address,
+            "tags": booking.tags,
+            "rooms": booking.rooms,
+            "bookingPrivacy": booking.bookingPrivacy,
+            "bookingStatus": "TENTATIVE",
+            "deletedBooking": booking.deletedBooking,
+            "creatorId": booking.creatorId,
+            "mediaIdsByRoom": booking.mediaIdsByRoom
+        }
+        fetch(bookingLink, {
+            method: 'PUT',
+            body: JSON.stringify(finalBookingBody),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            return response.json()
+        }).then(function(data){
+            currentComponent.setState({
+                booking:data,
+                bookingStatus: "TENTATIVE"
+            });
+        })
     }
 
 
@@ -136,6 +174,7 @@ class BookingDetail extends React.Component {
                             <li>Date Created: {this.state.dateCreated}</li>
                             <li>Date Requested: {this.state.dateRequested}</li>
                             <li>Date Completed: {this.state.dateCompleted}</li>
+                            <li>Booking Status: {this.state.bookingStatus}</li>
                             <li>Address: {this.state.address}</li>
                             <li>Booking Privacy: {this.state.bookingPrivacy}</li>
                         </div>
@@ -171,7 +210,12 @@ class BookingDetail extends React.Component {
 
 
                             </table>
-                            <button class="button fullWidth ">Edit</button>
+                            {(this.state.booking.bookingStatus === "COMPLETED" || this.state.booking.bookingStatus === "TENTATIVE") &&
+                                <button class="button fullWidth" disabled >Marked As Complete</button>
+                            }
+                            {(this.state.booking.bookingStatus === "MATCHED") &&
+                                <button class="button fullWidth" onClick={this.creatorComplete} >Mark As Complete</button>
+                            }
                             <button onClick= {this.refresh} class="button fullWidth ">Refresh</button>
                         </div>
                     </div>
@@ -234,9 +278,6 @@ class BookingDetail extends React.Component {
                 <h1>This is an error state</h1>
             </div>
         )
-
-
-
     };
 }
 export default BookingDetail;

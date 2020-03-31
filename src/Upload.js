@@ -162,7 +162,7 @@ class Upload extends React.Component{
             .catch(error => {
                 //handle error
             });
-            alert("Success! Media Uploaded to Cloud. We are now processing the data, please use the refresh button to view it");
+            alert("Success! Media Uploaded to Cloud. We are now processing the data, please use the refresh button below to view it");
             this.setState({
                 modalOpen: false
             })
