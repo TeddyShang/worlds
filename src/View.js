@@ -35,9 +35,33 @@ class View extends React.Component{
 
     componentWillReceiveProps(nextProps) {
         if(this.props.booking !== nextProps.booking) {
-            var numMedia = nextProps.booking.mediaIdsByRoom[this.state.roomIndex].length;
-            this.setState({booking: nextProps.booking,
-            numMedia: numMedia})
+            var booking = nextProps.booking;
+            let currentComponent = this;
+            var listOfIds = booking.mediaIdsByRoom[this.state.roomIndex];
+            var numMedia = listOfIds.length;
+    
+            let listOfMediaMetaDatas = [];
+    
+            listOfIds.forEach(element => {
+                fetch("http://localhost:8080/mediametadatas/" + element, {
+                    method: 'GET'
+                })
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data){
+                    listOfMediaMetaDatas.push(data);
+                    currentComponent.setState({
+                        mediametadatas : listOfMediaMetaDatas
+                    })
+                });
+            })
+
+            this.setState ({
+                booking: booking,
+                numMedia: numMedia,
+                mediametadatas : listOfMediaMetaDatas,
+            })
         }
     }
 

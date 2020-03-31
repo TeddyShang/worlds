@@ -176,7 +176,7 @@ class Upload extends React.Component{
                         <h1>Choose Local Photos/Videos to upload</h1>
                         <form onSubmit={this.submitFile}>
                             <div class="subCenterDiv">
-                                <input type='file' class="inputText" required onChange={this.handleFileUpload} />
+                                <input type='file' accept = "image/*,video/*"class="inputText" required onChange={this.handleFileUpload} />
                             </div>
                             <button type='submit'>Upload</button>
                         </form>
