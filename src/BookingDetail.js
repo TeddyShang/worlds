@@ -350,7 +350,10 @@ class BookingDetail extends React.Component {
                             {(this.state.booking.bookingStatus === "PENDING") &&
                                 <button class="button fullWidth" onClick={this.realtorCancel} >Cancel Booking</button>
                             }
-                            <button class="button fullWidth ">Edit</button>
+                            {(this.state.booking.bookingStatus === "PENDING") &&
+                                 <button class="button fullWidth ">Edit Booking</button>
+                            }
+                           
                             {(this.state.booking.bookingStatus === "TENTATIVE") &&
                                 <button class="button fullWidth" onClick={this.realtorConfirm} >Confirm Booking is Complete</button>
                             }
