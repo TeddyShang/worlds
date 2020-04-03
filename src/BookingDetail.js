@@ -26,6 +26,10 @@ class BookingDetail extends React.Component {
         this.creatorComplete = this.creatorComplete.bind(this);
         this.realtorCancel = this.realtorCancel.bind(this);
         this.realtorConfirm = this.realtorConfirm.bind(this);
+        this.editMode = false;
+        this.clickEdit = this.clickEdit.bind(this);
+        this.clickSave = this.clickSave.bind(this);
+        this.renderEditButton = this.renderEditButton.bind(this);
     }
 
     componentDidMount() {
@@ -200,6 +204,59 @@ class BookingDetail extends React.Component {
             });
         })
     }
+    clickEdit = () => {
+        this.editMode = true;
+        this.setState({ state: this.state });
+    }
+    clickSave = () =>  {
+        this.editMode = false;
+        let currentComponent = this;
+        var booking = currentComponent.state.booking;
+        var bookingLink = booking._links.self.href;
+        var finalBookingBody = {
+            "mediaIds": booking.mediaIds,
+            "dateCreated": booking.dateCreated,
+            "dateRequested": document.getElementById("Date Requested").value,
+            "dateCompleted": booking.dateCompleted,
+            "realtorId": booking.realtorId,
+            "locationCoordinates": booking.locationCoordinates,
+            "address": booking.address,
+            "tags": booking.tags,
+            "rooms": booking.rooms,
+            "bookingPrivacy": booking.bookingPrivacy,
+            "bookingStatus": booking.bookingStatus,
+            "deletedBooking": booking.deletedBooking,
+            "creatorId": booking.creatorId,
+            "mediaIdsByRoom": booking.mediaIdsByRoom
+        }
+        fetch(bookingLink, {
+            method: 'PUT',
+            body: JSON.stringify(finalBookingBody),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function (response) {
+            return response.json()
+        }).then(function (data) {
+            currentComponent.setState({
+                dateRequested: document.getElementById("Date Requested").value
+            });
+        })
+        
+    }
+    renderEditButton = () => {
+        if (!this.editMode) {
+            return (
+                <button class="button fullWidth " onClick={this.clickEdit}>Edit</button>
+            )
+        } else {
+            return (
+                <button class="button fullWidth " onClick={this.clickSave} type="button">Save</button>
+            )
+        }
+    }
+
+
     //Set the booking as completed, also mark the time completed
     realtorConfirm() {
         let currentComponent = this;
@@ -305,66 +362,132 @@ class BookingDetail extends React.Component {
             )
 
         } else if (this.state.loaded && this.state.user.userType == "REALTOR") {
-            return (
-                <div class="mainCenterDiv">
-                    <h1>iVue Booking Detail</h1>
-                    <div class="col">
-                        <div>
-                            <li>Booking ID: {this.state.bookingId}</li>
-                            <li>Realtor: {this.state.realtor}</li>
-                            <li>Creator: {this.state.creator}</li>
-                            <li>Date Created: {this.state.dateCreated}</li>
-                            <li>Date Requested: {this.state.dateRequested}</li>
-                            <li>Date Completed: {this.state.dateCompleted}</li>
-                            <li>Booking Status: {this.state.bookingStatus}</li>
-                            <li>Address: {this.state.address}</li>
-                            <li>Booking Privacy: {this.state.bookingPrivacy}</li>
-                        </div>
-                        <div>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Room Name</th>
-                                        <th>Photos</th>
-                                        <th>Videos</th>
-                                        <th>View</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {this.state.booking.rooms.map((value, index) => {
-                                        return (
-                                            <tr>
-                                                <td>{value[0]}</td>
-                                                <td>{value[1]}</td>
-                                                <td>{value[2]}</td>
-                                                <td>
-                                                    {<View roomIndex={index} booking={this.state.booking}></View>}
-                                                </td>
-
-                                            </tr>
-                                        )
-
-                                    })}
-
-                                </tbody>
-
-                            </table>
-                            {(this.state.booking.bookingStatus === "PENDING") &&
-                                <button class="button fullWidth" onClick={this.realtorCancel} >Cancel Booking</button>
-                            }
-                            {(this.state.booking.bookingStatus === "PENDING") &&
-                                 <button class="button fullWidth ">Edit Booking</button>
-                            }
-                           
-                            {(this.state.booking.bookingStatus === "TENTATIVE") &&
-                                <button class="button fullWidth" onClick={this.realtorConfirm} >Confirm Booking is Complete</button>
-                            }
-                            <button onClick={this.refresh} class="button fullWidth ">Refresh</button>
-
+            if (this.editMode){
+                return (
+                    <div class="mainCenterDiv">
+                        <h1>iVue Booking Detail</h1>
+                        <div class="col">
+                            <div>
+                                <li>Booking ID: {this.state.bookingId}</li>
+                                <li>Realtor: {this.state.realtor}</li>
+                                <li>Creator: {this.state.creator}</li>
+                                <li>Date Created: {this.state.dateCreated}</li>
+                                <li>Date Requested: </li>
+                                <textarea id="Date Requested" name="Date Requested:" defaultValue = {this.state.dateRequested}></textarea>
+                                <li>Date Completed: {this.state.dateCompleted}</li>
+                                <li>Booking Status: {this.state.bookingStatus}</li>
+                                <li>Address: {this.state.address}</li>
+                                <li>Booking Privacy: {this.state.bookingPrivacy}</li>
+                            </div>
+                            <div>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Room Name</th>
+                                            <th>Photos</th>
+                                            <th>Videos</th>
+                                            <th>View</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {this.state.booking.rooms.map((value, index) => {
+                                            return (
+                                                <tr>
+                                                    <td>{value[0]}</td>
+                                                    <td>{value[1]}</td>
+                                                    <td>{value[2]}</td>
+                                                    <td>
+                                                        {<View roomIndex={index} booking={this.state.booking}></View>}
+                                                    </td>
+    
+                                                </tr>
+                                            )
+    
+                                        })}
+    
+                                    </tbody>
+    
+                                </table>
+                                {(this.state.booking.bookingStatus === "PENDING") &&
+                                    <button class="button fullWidth" onClick={this.realtorCancel} >Cancel Booking</button>
+                                }
+                                {(this.state.booking.bookingStatus === "PENDING") &&
+                                    <button class="button fullWidth" onClick={this.clickSave}>Save Booking</button>
+                                }
+                               
+                                {(this.state.booking.bookingStatus === "TENTATIVE") &&
+                                    <button class="button fullWidth" onClick={this.realtorConfirm} >Confirm Booking is Complete</button>
+                                }
+                                <button onClick={this.refresh} class="button fullWidth ">Refresh</button>
+    
+                            </div>
                         </div>
                     </div>
-                </div>
-            )
+                )
+
+            } else{
+                return (
+                    <div class="mainCenterDiv">
+                        <h1>iVue Booking Detail</h1>
+                        <div class="col">
+                            <div>
+                                <li>Booking ID: {this.state.bookingId}</li>
+                                <li>Realtor: {this.state.realtor}</li>
+                                <li>Creator: {this.state.creator}</li>
+                                <li>Date Created: {this.state.dateCreated}</li>
+                                <li>Date Requested: {this.state.dateRequested}</li>
+                                <li>Date Completed: {this.state.dateCompleted}</li>
+                                <li>Booking Status: {this.state.bookingStatus}</li>
+                                <li>Address: {this.state.address}</li>
+                                <li>Booking Privacy: {this.state.bookingPrivacy}</li>
+                            </div>
+                            <div>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Room Name</th>
+                                            <th>Photos</th>
+                                            <th>Videos</th>
+                                            <th>View</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {this.state.booking.rooms.map((value, index) => {
+                                            return (
+                                                <tr>
+                                                    <td>{value[0]}</td>
+                                                    <td>{value[1]}</td>
+                                                    <td>{value[2]}</td>
+                                                    <td>
+                                                        {<View roomIndex={index} booking={this.state.booking}></View>}
+                                                    </td>
+    
+                                                </tr>
+                                            )
+    
+                                        })}
+    
+                                    </tbody>
+    
+                                </table>
+                                {(this.state.booking.bookingStatus === "PENDING") &&
+                                    <button class="button fullWidth" onClick={this.realtorCancel} >Cancel Booking</button>
+                                }
+                                {(this.state.booking.bookingStatus === "PENDING") &&
+                                    <button class="button fullWidth" onClick={this.clickEdit} >Edit Booking</button>
+                                }
+                               
+                                {(this.state.booking.bookingStatus === "TENTATIVE") &&
+                                    <button class="button fullWidth" onClick={this.realtorConfirm} >Confirm Booking is Complete</button>
+                                }
+                                <button onClick={this.refresh} class="button fullWidth ">Refresh</button>
+    
+                            </div>
+                        </div>
+                    </div>
+                )
+
+            }
         }
         return (
             <div class="mainCenterDiv">
