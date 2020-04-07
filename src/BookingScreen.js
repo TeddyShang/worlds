@@ -5,24 +5,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import Menu from './Menu'
 import CustomCesium from './CustomCesium';
-
+import PaypalButton from './PaypalButton';
 
 class BookingScreen extends React.Component {
 
-    state = {
-        realtorId: "5e42cae94331f24e84a9a6f5", //hardcoded
-        address: "",
-        dateRequested: "",
-        locationCoordinates: "",
-        rooms: [
-            // {
-            //     name: "Living Room",
-            //     photos: "0",
-            //     video: "False"
-            // }
-        ],
-        tags:[],
-    }
     photosRequested = 0; // amount of photos currently selected
     rooms = [
         "Entryway", "Kitchen", "Living Room",
@@ -41,13 +27,24 @@ class BookingScreen extends React.Component {
 
     constructor() {
         super();
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-
-
+        
+        this.state = {
+           rooms : [],
+           payment_successful : false,
+           payment_cancelled : false,
+           payment_errored : false,
+           details_confirmed: false,
+           realtorId: "",
+           address: "",
+           name: "",
+           dateRequested: "",
+           locationCoordinates: "",
+           tags:[],
+           cost: 0,
+           confirmed_booking: null
+        }
 
         // Populate rooms array
-        this.state.rooms = [];
         this.rooms.map((val, idx) => {
             this.state.rooms.push([
                 val,
@@ -55,24 +52,64 @@ class BookingScreen extends React.Component {
                 "False"
             ])
         })
+        //this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.payment_successful = this.payment_successful.bind(this);
+        this.payment_cancelled = this.payment_cancelled.bind(this);
+        this.payment_errored = this.payment_errored.bind(this);
+        this.confirmDetails = this.confirmDetails.bind(this);
     }
 
-    componentDidMount() {
-
-        var locationCoordinates = this.props.locationCoordinates;
-        var address = this.props.address;
-        this.setState ({
-            address: address,
-            locationCoordinates : locationCoordinates,
+    payment_successful(){
+        let currentComponent = this;
+        let httpStatus;
+        fetch('http://localhost:8080/bookings', {
+            method: 'POST',
+            body: JSON.stringify(currentComponent.state.confirmed_booking),
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
-        //console.log("Entering location coordinates", this.props.location, this.props.address);
+        .then(function(response) {
+            httpStatus = response.status;
+            if(response.status >= 400) {
+                return response.text()
+            } else {
+                return response.json()
+            }
+        }).then(function(data) {
+            //booking did not get posted
+            if (httpStatus >= 400) {
+                alert("ERROR");
+            } else {
+                ReactDOM.render(<Menu />, document.getElementById('root'));
+                var customCesium = ReactDOM.render(<CustomCesium/>, document.getElementById('application'));
+                customCesium.addListener();
+                alert("Payment and Booking Complete!");
+            }
+
+        });
+
     }
 
-    handleSubmit(event) {
+    payment_cancelled(){
+        this.setState({
+            payment_cancelled: true
+        })
+    }
+
+    payment_errored(){
+        this.setState({
+            payment_errored: true
+        })
+    }
+
+    confirmDetails(event){
         event.preventDefault();
 
         //Duplicate array
         var tagsarr = new Array();
+        var filteredRooms = [];
 
         for (var i = 0; i < this.state.rooms.length; i++) {
             if (this.state.rooms[i][1] > 0) {
@@ -81,36 +118,69 @@ class BookingScreen extends React.Component {
             if (this.state.rooms[i][2] == "True") {
                 tagsarr.push("Videos");
             }
+            if ((this.state.rooms[i][1] > 0 || this.state.rooms[i][2] == "True")) {
+                filteredRooms.push(this.state.rooms[i]);
+            }
         }
         //Filter unique values to put into tags array.
         const unique = (value, index, self) => {
             return self.indexOf(value) === index
         }
-        this.state.tags = tagsarr.filter(unique);
-        console.log(this.state.tags);
+       var tags = tagsarr.filter(unique);
 
-        //const data = new FormData(this.state);
-        //console.log("Submitting ", this.state);
+       //grab booking information
+       var booking = {
+           realtorId: this.state.realtorId,
+           address : this.state.address,
+           dateRequested : this.state.dateRequested,
+           rooms : filteredRooms,
+           tags : tags,
+           locationCoordinates :this.state.locationCoordinates
+       }
 
-        fetch('http://localhost:8080/bookings', {
-            method: 'POST',
-            body: JSON.stringify(this.state),
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        this.setState({
+            details_confirmed: true,
+            tags:tags,
+            confirmed_booking:booking
         })
-        .then(() =>{
-            ReactDOM.render(<Menu />, document.getElementById('root'));
-            var customCesium = ReactDOM.render(<CustomCesium/>, document.getElementById('application'));
-            customCesium.addListener();
-        });
-        //console.log("Submitted.");
-
     }
 
-    handleChange(event) {
-        //console.log("Changing, ", event.target);
+    componentDidMount() {
+        var locationCoordinates = this.props.locationCoordinates;
+        var address = this.props.address;
+        var user = JSON.parse(sessionStorage.getItem("current_user"));
+        var userLink = user._links.self.href;
+        var temp = userLink.split('/');
+        var id = temp[temp.length - 1];
+        var cost = this.props.cost;
+        var name = user.firstName + ' ' + user.lastName;
+        this.setState ({
+            address: address,
+            locationCoordinates : locationCoordinates,
+            realtorId: id,
+            cost : cost,
+            name: name
+        })
+    }
 
+    // handleSubmit(event) {
+    //     event.preventDefault();
+    //     fetch('http://localhost:8080/bookings', {
+    //         method: 'POST',
+    //         body: JSON.stringify(this.state),
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //     .then(() =>{
+    //         ReactDOM.render(<Menu />, document.getElementById('root'));
+    //         var customCesium = ReactDOM.render(<CustomCesium/>, document.getElementById('application'));
+    //         customCesium.addListener();
+    //     });
+
+    // }
+
+    handleChange(event) {
         // Fancy handling if part of room
         if (["photos", "video"].includes(event.target.className)) {
             let rooms = [...this.state.rooms];
@@ -123,7 +193,6 @@ class BookingScreen extends React.Component {
                 val = (event.target.checked ? "True" : "False");
                 rooms[event.target.dataset.id][2] = val;
             }
-            //rooms[event.target.dataset.id][event.target.className] = val;
             this.setState({ rooms }, () => console.log(this.state.rooms));
 
             // Update Photo Counter
@@ -137,11 +206,10 @@ class BookingScreen extends React.Component {
                 this.setState({ [event.target.name]: event.target.value })
             }
         }
-        //console.log("New State, ", this.state);
     }
 
-    renderRoom(idx) {
-        return (<RoomBookingEntry myDataProp={this.state.rooms[idx][0]} dataId={idx}></RoomBookingEntry>)
+    renderRoom(idx, readOnly) {
+        return (<RoomBookingEntry readOnly={readOnly} myDataProp={this.state.rooms[idx][0]} dataId={idx}></RoomBookingEntry>)
     }
     renderBanner(title) {
         return (<div class="banner">{title}</div>)
@@ -150,7 +218,7 @@ class BookingScreen extends React.Component {
         return (<div id="photoCounter">{this.photosRequested} / 60 Photos</div>)
     }
 
-    renderAllRooms() {
+    renderAllRooms(readOnly) {
         var roomsToRender = [];
         for (var i = 0; i < this.state.rooms.length; i++) {
             var bannerTitle = "";
@@ -163,48 +231,105 @@ class BookingScreen extends React.Component {
                 roomsToRender.push(this.renderBanner(bannerTitle));
             }
 
-            roomsToRender.push(this.renderRoom(i));
+            roomsToRender.push(this.renderRoom(i, readOnly));
         }
         return roomsToRender;
     }
 
     render() {
-        return (
-            <div id="bookingDetail">
-                <h1>iVue Real Estate Media Checklist</h1>
-                <div class="bookingForm">
-                    <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
-                        <label>Name</label><br />
-                        <input type="text" id="name" name="name" class="text" />
-                        <label>Address</label><br />
-                        <input type="text" id="address" name="address" value = {this.state.address} class="text" readOnly/>
-                        <label>Date</label><br />
-                        <input type="date" id="date" name="dateRequested" class="text" />
-
-                        <div id="roomList">
-
-                            {this.renderAllRooms()}
-
-                        </div>
-                        {this.renderPhotoCounter()}
-                        {/* <input type="button" id="addRow" value="Add Row" onclick="addRow()" /> */}
-                        <br></br>
-                        <button> Submit Data</button>
-                    </form>
+        if(!this.state.details_confirmed) {
+            return (
+                <div id="bookingDetail">
+                    <h1>iVue Real Estate Media Checklist</h1>
+                    <div class="bookingForm">
+                        <form onSubmit={this.confirmDetails} onChange={this.handleChange}>
+                            <label>Name</label><br />
+                            <input type="text" id="name" name="name" class="text" value={this.state.name} readOnly />
+                            <label>Address</label><br />
+                            <input type="text" id="address" name="address" value = {this.state.address} class="text" readOnly/>
+                            <label>Date</label><br />
+                            <input type="date" id="date" name="dateRequested" class="text" />
+    
+                            <div id="roomList">
+    
+                                {this.renderAllRooms(false)}
+    
+                            </div>
+                            {this.renderPhotoCounter()}
+                            <label>Total Cost: {this.state.cost}</label>
+                            <br></br>
+                            <button>Confirm Details</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        } else if (this.state.details_confirmed && !this.state.payment_successful) {
+
+            return (
+                <div id="bookingDetail">
+                    <h1>iVue Real Estate Media Checklist</h1>
+                    <div class="bookingForm">
+                        <form onSubmit={this.confirmDetails} onChange={this.handleChange}>
+                            <label>Name</label><br />
+                            <input type="text" id="name" name="name" class="text" value={this.state.name} readOnly />
+                            <label>Address</label><br />
+                            <input type="text" id="address" name="address" value={this.state.address} class="text" readOnly />
+                            <label>Date</label><br />
+                            <input type="date" id="date" name="dateRequested" class="text" readOnly />
+
+                            <div id="roomList">
+
+                                {this.renderAllRooms(true)}
+
+                            </div>
+                            {this.renderPhotoCounter()}
+                            <label>Total Cost: {this.state.cost}</label>
+                            <br></br>
+                            <button disabled>Details Confirmed! Complete transaction with Paypal</button>
+                            <PaypalButton order_total={this.state.cost} payment_successful={this.payment_successful} payment_cancelled={this.payment_cancelled} payment_errored={this.payment_errored}></PaypalButton>
+                        </form>
+                    </div>
+                </div>
+            )
+        } else if (this.state.payment_successful) {
+            return (
+                <p>Booking Complete, but should not be here ever</p>
+            )
+        } else {
+
+            return (
+                <p>Error State: We should not be here.</p>
+            )
+        }
+
     };
 }
 export default BookingScreen;
 
+
+
+
 class RoomBookingEntry extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
     }
-
     render() {
+        if(this.props.readOnly) {
+            return (
+                <div class="roomEntry">
+                    <label>{this.props.myDataProp}</label>
+                    <select class="photos" name="photos" data-id={this.props.dataId} disabled>
+                        <option value={0}>0</option>
+                        <option value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                        <option value={4}>4</option>
+                    </select>
+                    <input class="video" type="checkbox" data-id={this.props.dataId} disabled></input>
+                </div>
+            )
+        }
         return (
             <div class="roomEntry">
                 <label>{this.props.myDataProp}</label>
