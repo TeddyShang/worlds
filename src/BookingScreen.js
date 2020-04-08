@@ -122,13 +122,13 @@ class BookingScreen extends React.Component {
                 filteredRooms.push(this.state.rooms[i]);
             }
         }
-        //Filter unique values to put into tags array.
+        // Filter unique values to put into tags array.
         const unique = (value, index, self) => {
             return self.indexOf(value) === index
         }
        var tags = tagsarr.filter(unique);
 
-       //grab booking information
+       // Grab booking information
        var booking = {
            realtorId: this.state.realtorId,
            address : this.state.address,
@@ -163,23 +163,6 @@ class BookingScreen extends React.Component {
         })
     }
 
-    // handleSubmit(event) {
-    //     event.preventDefault();
-    //     fetch('http://localhost:8080/bookings', {
-    //         method: 'POST',
-    //         body: JSON.stringify(this.state),
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     })
-    //     .then(() =>{
-    //         ReactDOM.render(<Menu />, document.getElementById('root'));
-    //         var customCesium = ReactDOM.render(<CustomCesium/>, document.getElementById('application'));
-    //         customCesium.addListener();
-    //     });
-
-    // }
-
     handleChange(event) {
         // Fancy handling if part of room
         if (["photos", "video"].includes(event.target.className)) {
@@ -201,7 +184,7 @@ class BookingScreen extends React.Component {
                 this.photosRequested += parseInt(rooms[i][1]);
             }
         } else {
-            // address, date updating. Not name (dead field for now)
+            // Address, date updating. Not name (dead field for now)
             if (event.target.name != "name") {
                 this.setState({ [event.target.name]: event.target.value })
             }
