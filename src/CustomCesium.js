@@ -171,25 +171,59 @@ class CustomCesium extends React.Component {
     }
 
   }
-  //Code to fetch booking objects from server
+  
+ //Code to fetch booking objects from server
   componentDidMount() {
     let currentComponent = this;
+    var displayedBookings = [];
+
+    //list of current user's bookings
+    var user = JSON.parse(sessionStorage.getItem('current_user'));
+    var bookingIds = user.bookingIds;
+    console.log(user);
+    console.log(bookingIds);
+
     fetch('http://localhost:8080/bookings')
     .then(res => res.json())
     .then((function(data){
+
+      //all the bookings
       var tempBookings = data._embedded.bookings;
-      tempBookings.forEach(function(booking){
-        var parseString = booking.locationCoordinates.substring(1, booking.locationCoordinates.length - 1);
-        var posArray = parseString.split(",");
-        var locationCoordinates = Cartesian3.fromElements(parseFloat(posArray[0]), parseFloat(posArray[1]), parseFloat(posArray[2]));
-        booking.locationCoordinates = locationCoordinates;
+
+      tempBookings.forEach(function(booking) {
+
+        //gets individual booking url
+        var url = booking._links.self.href;
+        url = url.split('/');
+        url = url.pop();
+        console.log(url);
+        
+        //When a booking is "OPEN", it is public so no need to filer by bookings user owns
+        if (booking.bookingPrivacy == "OPEN") {
+          var parseString = booking.locationCoordinates.substring(1, booking.locationCoordinates.length - 1);
+          var posArray = parseString.split(",");
+          var locationCoordinates = Cartesian3.fromElements(parseFloat(posArray[0]), parseFloat(posArray[1]), parseFloat(posArray[2]));
+          booking.locationCoordinates = locationCoordinates;
+          displayedBookings.push(booking);
+        } else if (booking.bookingPrivacy == "PRIVATE") {
+          //booking privacy is closed so we need to check if it is in list of bookingIds for that user
+          if (bookingIds.includes(url) ) {
+            var parseString = booking.locationCoordinates.substring(1, booking.locationCoordinates.length - 1);
+            var posArray = parseString.split(",");
+            var locationCoordinates = Cartesian3.fromElements(parseFloat(posArray[0]), parseFloat(posArray[1]), parseFloat(posArray[2]));
+            booking.locationCoordinates = locationCoordinates;
+            displayedBookings.push(booking);
+          }
+          else {
+            console.log("Booking not added to list.");
+          } 
+        } //end else
       });
-      currentComponent.setState({bookings: tempBookings})
+      console.log(displayedBookings);
+      currentComponent.setState({bookings: displayedBookings})
     }))
     .catch(console.log)
   }
-
-
 
   //Add listeners to search, triggers function to create new entity
   addListener(){
