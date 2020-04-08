@@ -7,6 +7,7 @@ import Menu from './Menu'
 import CustomCesium from './CustomCesium';
 import PaypalButton from './PaypalButton';
 
+// The screen with the many rooms to be booked
 class BookingScreen extends React.Component {
 
     photosRequested = 0; // amount of photos currently selected
@@ -60,6 +61,7 @@ class BookingScreen extends React.Component {
         this.confirmDetails = this.confirmDetails.bind(this);
     }
 
+    // Confirming payment
     payment_successful(){
         let currentComponent = this;
         let httpStatus;
@@ -92,18 +94,21 @@ class BookingScreen extends React.Component {
 
     }
 
+    // Payment cancelled
     payment_cancelled(){
         this.setState({
             payment_cancelled: true
         })
     }
 
+    // Payment error
     payment_errored(){
         this.setState({
             payment_errored: true
         })
     }
 
+    // Confirm details for payment
     confirmDetails(event){
         event.preventDefault();
 
@@ -145,6 +150,7 @@ class BookingScreen extends React.Component {
         })
     }
 
+    // On screen load, set settigs
     componentDidMount() {
         var locationCoordinates = this.props.locationCoordinates;
         var address = this.props.address;
@@ -163,6 +169,7 @@ class BookingScreen extends React.Component {
         })
     }
 
+    // Updates screens based on input
     handleChange(event) {
         // Fancy handling if part of room
         if (["photos", "video"].includes(event.target.className)) {
@@ -191,16 +198,20 @@ class BookingScreen extends React.Component {
         }
     }
 
+    // Renders a specific room details
     renderRoom(idx, readOnly) {
         return (<RoomBookingEntry readOnly={readOnly} myDataProp={this.state.rooms[idx][0]} dataId={idx}></RoomBookingEntry>)
     }
+    // Render a banner to split sections
     renderBanner(title) {
         return (<div class="banner">{title}</div>)
     }
+    // Render counter for all rooms on how many photos selcted
     renderPhotoCounter() {
         return (<div id="photoCounter">{this.photosRequested} / 60 Photos</div>)
     }
 
+    // Render all rooms
     renderAllRooms(readOnly) {
         var roomsToRender = [];
         for (var i = 0; i < this.state.rooms.length; i++) {
@@ -219,6 +230,7 @@ class BookingScreen extends React.Component {
         return roomsToRender;
     }
 
+    // Render entire screen
     render() {
         if(!this.state.details_confirmed) {
             return (
@@ -297,6 +309,7 @@ class RoomBookingEntry extends React.Component {
     constructor(props) {
         super(props);
     }
+    // Render small section containing input for a specific room
     render() {
         if(this.props.readOnly) {
             return (
