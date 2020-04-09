@@ -4,6 +4,8 @@ import './index.css';
 import './Dashboard.css';
 import BookingDetail from './BookingDetail';
 
+var baseURL = "http://localhost:8080";
+
 class DashboardScreen extends React.Component {
 
     constructor() {
@@ -56,7 +58,7 @@ class DashboardScreen extends React.Component {
         });
 
         // Retrieve Profile Data
-        fetch ("http://localhost:8080/userprofiles/" + this.profileId, {
+        fetch (baseURL + "/userprofiles/" + this.profileId, {
             method: 'GET'
         })
         .then(function(response) {
@@ -96,7 +98,7 @@ class DashboardScreen extends React.Component {
         .then(() => {
 
             // Submitting State to User Profiles
-            fetch('http://localhost:8080/userprofiles/' + this.profileId, {
+            fetch(baseURL + '/userprofiles/' + this.profileId, {
                 method: 'PUT',
                 body: JSON.stringify(this.state),
                 headers: {
@@ -106,6 +108,7 @@ class DashboardScreen extends React.Component {
             .then(function(response) {
                 if (response.status >= 400) {
                     // Error
+                    console.log("Error. Couldn't submit data about user profile. Error code: ", response.status);
                 } else {
                     // On Success
                 }
