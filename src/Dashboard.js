@@ -35,6 +35,7 @@ class DashboardScreen extends React.Component {
         this.bookingDetail = this.bookingDetail.bind(this);
     }
 
+    // On screen load, retrieve all the bookings from server
     componentDidMount() {
         var user = JSON.parse(sessionStorage.getItem("current_user")); //This will be the full json document of the user that is logged in
         let currentComponent = this;
@@ -74,6 +75,7 @@ class DashboardScreen extends React.Component {
         });
     }
 
+    // Update state info when input changes, prepare it for 'save' functionality
     handleChange = (event) => {
         console.log("Event Name: ", event.target.name);
         if (["aboutMe", "professionalExperience"].includes(event.target.name)) {
@@ -92,6 +94,7 @@ class DashboardScreen extends React.Component {
         }
     }
 
+    // Submit edited data to server
     handleSubmit = (event) => {
         event.preventDefault();
 
@@ -127,6 +130,7 @@ class DashboardScreen extends React.Component {
         })
     }
 
+    // A generalized function to render either AboutMe or ProfessionalExperience section
     renderProfileField(labelName, fieldName) {
         if (this.editMode) {
             return (
@@ -146,6 +150,7 @@ class DashboardScreen extends React.Component {
         
     }
 
+    // Goes to BookingDetail wrapper
     bookingDetail(booking) {
         //We should launch the booking detail page
         var booking = booking;
@@ -153,6 +158,7 @@ class DashboardScreen extends React.Component {
     }
 
 
+    // Renders Booking Detail box in the overview list
     renderBookingDetail(booking) {
         return (
             <div class="dashboardBookingBox" onClick={this.bookingDetail.bind(this, booking)}>
@@ -164,6 +170,7 @@ class DashboardScreen extends React.Component {
         )
     }
 
+    // Renders all bookings
     renderBookingDetailList() {
         if (this.bookings == null) {
             return (<div class="dashboardBookingBox">There are no bookings</div>);
@@ -177,6 +184,7 @@ class DashboardScreen extends React.Component {
         }
     }
 
+    // OnClick functions for the edit/save buttons
     clickEdit = () => {
         this.editMode = true;
         this.setState({ state: this.state });
@@ -187,6 +195,7 @@ class DashboardScreen extends React.Component {
         //this.handleSubmit();
     }
 
+    // Renders edit button that can also appear as a save button
     renderEditButton = () => {
         if (!this.editMode) {
             return (
@@ -199,6 +208,7 @@ class DashboardScreen extends React.Component {
         }
     }
 
+    // Uploading picture to database functionality
     uploadProfilePic = () => {
         if (this.profilePicToUpload == null)
             return new Promise(resolve => {
@@ -228,6 +238,7 @@ class DashboardScreen extends React.Component {
         });
     }
 
+    // Render profile picture. Uses default pic if not available
     renderProfilePic = () => {
         var url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
         if (this.urlToRenderedProfilePic != null)
@@ -238,7 +249,6 @@ class DashboardScreen extends React.Component {
         
         if (this.editMode) {
             result.push(<img id="profilePic" class = "profilePicWithButton" src={url}></img>)
-            //result.push(<input class="button fullWidth" id="profilePicButton" onClick={this.uploadProfilePic} type="file">Upload Profile Picture</input>);
             result.push(<label class="profilePicLabel button" for="profilePicButton">Upload Profile Picture (PNG, JPG)</label>);
             result.push(<input  id="profilePicButton" name="urlToProfilePicture" accept="image/*" type="file"/>);
         } else {
@@ -247,6 +257,7 @@ class DashboardScreen extends React.Component {
         return result;
     }
 
+    // Render Dashboard screen
     render() {
         return (
             <div class="mainCenterDiv">
