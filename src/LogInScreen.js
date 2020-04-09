@@ -32,17 +32,17 @@ class LogInScreen extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
+    // On screen load, reset error message
     componentDidMount() {
         this.errorMessage = "";
     }
 
+    // Update username and password
     handleChange = (event) => {
-        //console.log("Changing, ", event.target);
-        // Update username and password
         this.setState({ [event.target.name]: event.target.value })
-        //console.log("New State, ", this.state);
     }
 
+    // Submits login data functionality
     handleSubmit = (event) => {
         event.preventDefault();
         console.log("Submitting ", this.state);
@@ -61,12 +61,9 @@ class LogInScreen extends React.Component {
             }
         })
         .then(function(response) {
-            //console.log("Response Status: " + response.status);
-            //console.log("Error message is: ", this.errorMessage);
             if (response.status >= 400) {
                 errorStatus = true;
                 // Error
-                //this.errorMessage = "ERROR";
                 return response.text();
             } else {
                 errorStatus = false;
@@ -91,11 +88,9 @@ class LogInScreen extends React.Component {
         }).catch((err) => {
             console.log("Errors: ", err.response);
         });
-
-        console.log("Submitted.");
-        console.log("Error Message: ", this.errorMessage);
     }
 
+    // Simple reusable log in field rendering
     renderField(labelName, fieldName, inputType) {
         return (
             <div>
@@ -106,6 +101,7 @@ class LogInScreen extends React.Component {
     }
 
 
+    // Renders login screen
     render() {
         return (
             <div class="mainCenterDiv">
