@@ -42,8 +42,6 @@ class DashboardScreen extends React.Component {
         var userLink = user._links.self.href;
         this.profileId = user.profileId;
 
-        console.log("User is: ", user);
-
 
         // Retrieve all bookings
         fetch(userLink + '/bookings', {
@@ -55,7 +53,6 @@ class DashboardScreen extends React.Component {
         .then(function(data){
             currentComponent.bookings = data._embedded.bookings;
             currentComponent.setState({ state: currentComponent.state });
-            console.log("Bookings: ", currentComponent.bookings);
         });
 
         // Retrieve Profile Data
@@ -71,26 +68,20 @@ class DashboardScreen extends React.Component {
             currentComponent.setState({ aboutMe: data.aboutMe });
             currentComponent.setState({ professionalExperience: data.professionalExperience });
             currentComponent.setState({ urlToProfilePicture: data.urlToProfilePicture });
-            console.log("UserProfile: ", currentComponent.userProfile);
         });
     }
 
     // Update state info when input changes, prepare it for 'save' functionality
     handleChange = (event) => {
-        console.log("Event Name: ", event.target.name);
         if (["aboutMe", "professionalExperience"].includes(event.target.name)) {
             this.setState({ [event.target.name]: event.target.value })
-            console.log("New State, ", this.state);
         }
 
         if (event.target.name == "urlToProfilePicture") {
-            console.log("New Image: ", event.target.files[0]);
             this.profilePicToUpload = event.target.files[0];
             this.urlToRenderedProfilePic = URL.createObjectURL(this.profilePicToUpload);
 
             this.setState({ state: this.state }); // Changing state for url comes later when we submit
-
-            console.log("urlToRenderedProfilePic: ", this.urlToRenderedProfilePic);
         }
     }
 
@@ -115,10 +106,8 @@ class DashboardScreen extends React.Component {
             .then(function(response) {
                 if (response.status >= 400) {
                     // Error
-                    console.log("Failure.")
                 } else {
                     // On Success
-                    console.log("Success!")
                 }
                 return response.json();
             }).then(function(data) {
@@ -229,7 +218,6 @@ class DashboardScreen extends React.Component {
             body: formData
         }).then((response) => {
             if (response.status == 204) {
-                console.log("Uploaded Profile Picture Succesfully!");
                 this.state.urlToProfilePicture = finalURL;
             }
         })
