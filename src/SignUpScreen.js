@@ -1,10 +1,7 @@
 import React from 'react';
 import './BookingWindow.css';
-import { thisExpression } from '@babel/types';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Menu from './Menu'
-import CustomCesium from './CustomCesium';
 import LogInScreen from './LogInScreen';
 
 const RegisType = {
@@ -13,6 +10,7 @@ const RegisType = {
     CONTENT_CREATOR: 2
 }
 
+// Choosing which registration type you want
 class SignUpScreen extends React.Component {
 
     goToRegistrationRealtor = () => {
@@ -23,6 +21,7 @@ class SignUpScreen extends React.Component {
     }
 
 
+    // Render first selection choosing which type of registration you are doing: creator or realtor
     render() {
         return (
             <div class="mainCenterDiv">
@@ -38,8 +37,10 @@ class SignUpScreen extends React.Component {
 }
 export default SignUpScreen;
 
+// Actual registration
 class SignUpScreenRegistration extends React.Component {
 
+    // Return to login screen functionality
     cancelRegistration = () => {
         ReactDOM.render(<LogInScreen/>, document.getElementById('root'));
     }
@@ -67,6 +68,7 @@ class SignUpScreenRegistration extends React.Component {
         this.errorMessage = "";
     }
 
+    // On screen load, choose what type name
     componentDidMount() {
         var type = this.props.type;
         this.setState({
@@ -75,8 +77,8 @@ class SignUpScreenRegistration extends React.Component {
         this.typeName = type == 0 ? "Staff" : type == 1 ? "Realtor" :"Content Creator";
     }
 
+    // Updating state when user changes input
     handleChange = (event) => {
-        console.log("Changing, ", event.target);
         // Update verified password
         if (["password1", "password2"].includes(event.target.name)) {
             this.passwords[event.target.name] = event.target.value;
@@ -88,12 +90,11 @@ class SignUpScreenRegistration extends React.Component {
         else {
             this.setState({ [event.target.name]: event.target.value })
         }
-        console.log("New State, ", this.state);
     }
 
+    // Submitting registration data to server
     handleSubmit = (event) => {
         event.preventDefault();
-        console.log("Submitting ", this.state);
 
         let currentComponent = this;
 
@@ -105,7 +106,6 @@ class SignUpScreenRegistration extends React.Component {
             }
         })
         .then(function(response) {
-            console.log("Response Status: " + response.status);
             if (response.status >= 400) {
                 return response.text();
             } else {
@@ -116,13 +116,12 @@ class SignUpScreenRegistration extends React.Component {
         }).then(function(data) {
              currentComponent.errorMessage = data;
              currentComponent.setState({["email"]: currentComponent.state.email});
-            console.log("Data:", data);
         }).catch((err) => {
             console.log("Errors: ", err.response);
         });
-        console.log("Submitted.");
     }
 
+    // Reusable function to render a generalized input text field
     renderField(labelName, fieldName, inputType) {
         return (
             <div>
@@ -132,6 +131,7 @@ class SignUpScreenRegistration extends React.Component {
         )
     }
 
+    // Render the registration screen
     render() {
         var state = this.state;
         if (state.userType == RegisType.REALTOR) {
