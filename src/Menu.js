@@ -8,6 +8,8 @@ import Dashboard from './Dashboard';
 import ReactDOM from 'react-dom';
 import CustomCesium from './CustomCesium';
 
+// return a menu button division upon calling to constantly present on left top section of 
+// every screen to provide a realtor shortcut to significant pages. 
 export default function SimpleMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
