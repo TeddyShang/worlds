@@ -204,10 +204,12 @@ class BookingDetail extends React.Component {
             });
         })
     }
+    // enable user to edit the requested date.
     clickEdit = () => {
         this.editMode = true;
         this.setState({ state: this.state });
     }
+    // save current booking detail with PUT request.
     clickSave = () =>  {
         this.editMode = false;
         let currentComponent = this;
@@ -244,6 +246,9 @@ class BookingDetail extends React.Component {
         })
         
     }
+
+    // renders edit or save button depend on user's past action.
+    // currently not implemented on render method.
     renderEditButton = () => {
         if (!this.editMode) {
             return (
