@@ -10,6 +10,7 @@ import { Carousel } from 'react-responsive-carousel';
  * 1. get the metadatas for a booking using information from previous page
  * 2. Display medias for the booking, otherwise alert that no media is uploaded.
  */
+const baseUrl = 'http://localhost:8080/';
 class View extends React.Component{
     constructor(props) {
         super(props);
@@ -49,7 +50,7 @@ class View extends React.Component{
             let listOfMediaMetaDatas = [];
     
             listOfIds.forEach(element => {
-                fetch("http://localhost:8080/mediametadatas/" + element, {
+                fetch(baseUrl + "mediametadatas/" + element, {
                     method: 'GET'
                 })
                 .then(function(response) {
@@ -85,7 +86,7 @@ class View extends React.Component{
         let listOfMediaMetaDatas = [];
 
         listOfIds.forEach(element => {
-            fetch("http://localhost:8080/mediametadatas/" + element, {
+            fetch(baseUrl + "mediametadatas/" + element, {
                 method: 'GET'
             })
             .then(function(response) {
@@ -108,7 +109,7 @@ class View extends React.Component{
     }
 
     render() {
-        if (this.state.numMedia == 0) {
+        if (this.state.numMedia === 0) {
             return <p>No media uploaded</p>
         } else if (this.state.numMedia > 0){
             return (
@@ -122,17 +123,17 @@ class View extends React.Component{
                                     {this.state.mediametadatas.map((value) => {
                                         var temp = value.urlToMedia.split(".");
                                         var filetype = temp[temp.length - 1];
-                                        if (filetype == "ogg") {
+                                        if (filetype === "ogg") {
                                             return (
                                                 <video width="700" height="500" src={value.urlToMedia} controls>Your browser does not support .ogg video formats</video>
                                             )
-                                        } else if (filetype == "mp4") {
+                                        } else if (filetype === "mp4") {
                                             return (
                                                 <div>
                                                     <video width="700" height="500" src={value.urlToMedia} controls>Your browser does not support .mp4 video formats</video>
                                                 </div>
                                             )
-                                        } else if (filetype == "webm") {
+                                        } else if (filetype === "webm") {
                                             return (
                                                 <video width="700" height="500" src={value.urlToMedia} controls>Your browser does not support .webm video formats</video>
                                             )
