@@ -1,17 +1,12 @@
 import React from 'react';
 import './BookingWindow.css';
-import { thisExpression } from '@babel/types';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Menu from './Menu'
 import CustomCesium from './CustomCesium';
 import SignUpScreen from './SignUpScreen';
 
-const RegisType = {
-    STAFF: 0,
-    REALTOR: 1,
-    CONTENT_CREATOR: 2
-}
+const baseUrl = 'http://localhost:8080/';
 
 class LogInScreen extends React.Component {
     signUpScreen = () => {
@@ -45,15 +40,12 @@ class LogInScreen extends React.Component {
     // Submits login data functionality
     handleSubmit = (event) => {
         event.preventDefault();
-        console.log("Submitting ", this.state);
-        console.log("Error Message: ", this.errorMessage);
-
         let currentComponent = this;
 
         //new
         let errorStatus = null;
 
-         fetch('http://localhost:8080/login', {
+         fetch(baseUrl + 'login', {
             method: 'POST',
             body: JSON.stringify(this.state),
             headers: {
@@ -75,7 +67,6 @@ class LogInScreen extends React.Component {
                 //this.errorMessage = data;
                 currentComponent.errorMessage = data;
                 currentComponent.setState({ ["email"]: currentComponent.state.email });
-                console.log("Data:", data);
                 return data;
             } else {
                 // On Success, Go to Map Screen
