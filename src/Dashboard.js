@@ -4,7 +4,9 @@ import './index.css';
 import './Dashboard.css';
 import BookingDetail from './BookingDetail';
 
-var baseURL = "http://localhost:8080";
+const baseURL = "http://localhost:8080";
+const defaultPictureURL = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+const S3base = 'https://worlds-media.s3.amazonaws.com/';
 
 class DashboardScreen extends React.Component {
 
@@ -79,7 +81,7 @@ class DashboardScreen extends React.Component {
             this.setState({ [event.target.name]: event.target.value })
         }
 
-        if (event.target.name == "urlToProfilePicture") {
+        if (event.target.name === "urlToProfilePicture") {
             this.profilePicToUpload = event.target.files[0];
             this.urlToRenderedProfilePic = URL.createObjectURL(this.profilePicToUpload);
 
@@ -91,8 +93,6 @@ class DashboardScreen extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        let currentComponent = this;
-        
         // Upload picture to AWS
         this.uploadProfilePic()
         .then(() => {
@@ -145,7 +145,6 @@ class DashboardScreen extends React.Component {
     // Goes to BookingDetail wrapper
     bookingDetail(booking) {
         //We should launch the booking detail page
-        var booking = booking;
         ReactDOM.render(<BookingDetail booking = {booking}></BookingDetail>, document.getElementById('application'));
     }
 
@@ -208,20 +207,20 @@ class DashboardScreen extends React.Component {
             });
 
         //submit to AWS (the file)
-        var baseUrl = 'https://worlds-media.s3.amazonaws.com/';
-        let AWSresponse;
         var finalKey = "ProfilePictures/" + this.profileId + "/" + this.profilePicToUpload.name;
-        let finalURL = baseUrl + finalKey;
+        let finalURL = S3base + finalKey;
         const formData = new FormData();
         formData.append('key', finalKey);
         formData.append('file', this.profilePicToUpload);
 
-        return fetch(baseUrl, {
+        return fetch(S3base, {
             method: 'POST',
             body: formData
         }).then((response) => {
-            if (response.status == 204) {
-                this.state.urlToProfilePicture = finalURL;
+            if (response.status === 204) {
+                this.setState({
+                    urlToProfilePicture: finalURL
+                })
             }
         })
         .catch(error => {
@@ -231,10 +230,10 @@ class DashboardScreen extends React.Component {
 
     // Render profile picture. Uses default pic if not available
     renderProfilePic = () => {
-        var url = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+        var url = defaultPictureURL;
         if (this.urlToRenderedProfilePic != null)
             url = this.urlToRenderedProfilePic;
-        else if (this.state.urlToProfilePicture != "")
+        else if (this.state.urlToProfilePicture !== "")
             url = this.state.urlToProfilePicture;
         var result = [];
         
