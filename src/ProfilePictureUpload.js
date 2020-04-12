@@ -2,10 +2,15 @@ import React from 'react';
 import './BaseIVueStyle.css';
 import ModalButton from './ModalBtn.js';
 import Modal from 'react-modal';
+
+
 /**
  * This class is for a realtor to upload their profile pictures to
  * the S3 database.
  */
+const baseUrl = 'http://localhost:8080/';
+const S3Url = 'https://worlds-media.s3.amazonaws.com/';
+
 class ProfilePictureUpload extends React.Component {
     constructor(props) {
         super(props);
@@ -40,15 +45,11 @@ class ProfilePictureUpload extends React.Component {
         let finalURL;
         
         //This will be the full json document of the user that is logged in
-        var user = sessionStorage.getItem("current_user");
+        var user = JSON.parse(sessionStorage.getItem("current_user"));
 
-        //Uncomment for use of session user.
-        //var profileId = user.profileId;
+        var profileId = user.profileId;
 
-        //temp for testing
-        var profileId = "5e586a7ab69af82f68c9c6d5"
-
-        fetch('http://localhost:8080/userprofiles/' + profileId, {
+        fetch( baseUrl + 'userprofiles/' + profileId, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -64,16 +65,14 @@ class ProfilePictureUpload extends React.Component {
             })
             .then(() => {
                 //submit to AWS (the file)
-                var baseUrl = 'https://worlds-media.s3.amazonaws.com/';
-                let AWSresponse;
                 var finalKey = "ProfilePictures/" + profileId + "/" + this.state.file[0].name;
-                finalURL = baseUrl + finalKey;
+                finalURL = S3Url + finalKey;
                 const formData = new FormData();
                 formData.append('key', finalKey);
                 formData.append('file', this.state.file[0]);
                 formData.append('Content-Type', this.state.file.type);
 
-                fetch(baseUrl, {
+                fetch(S3Url, {
                     method: 'POST',
                     body: formData
                 }).then((response) => {
@@ -94,7 +93,7 @@ class ProfilePictureUpload extends React.Component {
                     "urlToProfilePicture": finalURL,
                     "professionalExperience": userProfile.professionalExperience
                 };
-                fetch('http://localhost:8080/userprofiles/' + profileId, {
+                fetch(baseUrl + 'userprofiles/' + profileId, {
                     method: 'PUT',
                     body: JSON.stringify(finalUserProfile),
                     headers: {
