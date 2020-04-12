@@ -3,7 +3,6 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import LogInScreen from './LogInScreen';
-import BookingDetail from './BookingDetail';
 import Dashboard from './Dashboard';
 import ReactDOM from 'react-dom';
 import CustomCesium from './CustomCesium';
