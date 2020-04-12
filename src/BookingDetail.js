@@ -1,13 +1,15 @@
 import React from 'react';
 import './index.css';
-import Menu from './Menu';
 import Upload from './Upload';
 import View from './View';
+import { Viewer} from "resium";
+import { Cartesian3, Rectangle} from "cesium";
 
 class BookingDetail extends React.Component {
 
     constructor(props) {
         super(props);
+        this.ref = React.createRef()
         this.state = {
             booking: null,
             bookingId: null,
@@ -215,35 +217,54 @@ class BookingDetail extends React.Component {
         let currentComponent = this;
         var booking = currentComponent.state.booking;
         var bookingLink = booking._links.self.href;
-        var finalBookingBody = {
-            "mediaIds": booking.mediaIds,
-            "dateCreated": booking.dateCreated,
-            "dateRequested": document.getElementById("Date Requested").value,
-            "dateCompleted": booking.dateCompleted,
-            "realtorId": booking.realtorId,
-            "locationCoordinates": booking.locationCoordinates,
-            "address": booking.address,
-            "tags": booking.tags,
-            "rooms": booking.rooms,
-            "bookingPrivacy": booking.bookingPrivacy,
-            "bookingStatus": booking.bookingStatus,
-            "deletedBooking": booking.deletedBooking,
-            "creatorId": booking.creatorId,
-            "mediaIdsByRoom": booking.mediaIdsByRoom
-        }
-        fetch(bookingLink, {
-            method: 'PUT',
-            body: JSON.stringify(finalBookingBody),
-            headers: {
-                'Content-Type': 'application/json'
+
+        //process address and send when resolved
+        var address = document.getElementById("Address").value
+        const node = this.ref.current;
+        const geocoder = node.cesiumElement.geocoder.viewModel._geocoderServices[1];
+        let loc;
+        let searchPosition = address;
+        let aPosition;
+        geocoder.geocode(searchPosition).then((result) => {
+            loc = result[0].destination;
+            if (loc instanceof Rectangle){
+              let finalLocation = Rectangle.center(loc);
+              aPosition = Cartesian3.fromRadians(finalLocation.longitude, finalLocation.latitude);
             }
-        }).then(function (response) {
-            return response.json()
-        }).then(function (data) {
-            currentComponent.setState({
-                dateRequested: document.getElementById("Date Requested").value
-            });
-        })
+            if (loc instanceof Cartesian3) {
+              aPosition = loc
+            }
+            var finalBookingBody = {
+                "mediaIds": booking.mediaIds,
+                "dateCreated": booking.dateCreated,
+                "dateRequested": document.getElementById("Date Requested").value,
+                "dateCompleted": booking.dateCompleted,
+                "realtorId": booking.realtorId,
+                "locationCoordinates": aPosition.toString(),
+                "address": address,
+                "tags": booking.tags,
+                "rooms": booking.rooms,
+                "bookingPrivacy": booking.bookingPrivacy,
+                "bookingStatus": booking.bookingStatus,
+                "deletedBooking": booking.deletedBooking,
+                "creatorId": booking.creatorId,
+                "mediaIdsByRoom": booking.mediaIdsByRoom
+            }
+            fetch(bookingLink, {
+                method: 'PUT',
+                body: JSON.stringify(finalBookingBody),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(function (response) {
+                return response.json()
+            }).then(function (data) {
+                currentComponent.setState({
+                    dateRequested: document.getElementById("Date Requested").value,
+                    address: address 
+                });
+            })
+          });
         
     }
 
@@ -378,10 +399,11 @@ class BookingDetail extends React.Component {
                                 <li>Creator: {this.state.creator}</li>
                                 <li>Date Created: {this.state.dateCreated}</li>
                                 <li>Date Requested: </li>
-                                <textarea id="Date Requested" name="Date Requested:" defaultValue = {this.state.dateRequested}></textarea>
+                                <input type="date" id="Date Requested" name="Date Requested:" defaultValue = {this.state.dateRequested}></input>
                                 <li>Date Completed: {this.state.dateCompleted}</li>
                                 <li>Booking Status: {this.state.bookingStatus}</li>
-                                <li>Address: {this.state.address}</li>
+                                <li>Address: </li>
+                                <input type="text" id="Address" name="Address:" defaultValue = {this.state.address}></input>
                                 <li>Booking Privacy: {this.state.bookingPrivacy}</li>
                             </div>
                             <div>
@@ -424,6 +446,10 @@ class BookingDetail extends React.Component {
                                     <button class="button fullWidth" onClick={this.realtorConfirm} >Confirm Booking is Complete</button>
                                 }
                                 <button onClick={this.refresh} class="button fullWidth ">Refresh</button>
+
+                                <div hidden>
+                                    <Viewer ref={this.ref}></Viewer>
+                                </div>
     
                             </div>
                         </div>
