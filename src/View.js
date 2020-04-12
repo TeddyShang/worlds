@@ -5,6 +5,11 @@ import Modal from 'react-modal';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 
+/**
+ * This class will
+ * 1. get the metadatas for a booking using information from previous page
+ * 2. Display medias for the booking, otherwise alert that no media is uploaded.
+ */
 class View extends React.Component{
     constructor(props) {
         super(props);

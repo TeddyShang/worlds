@@ -19,7 +19,6 @@ import 'react-accessible-accordion/dist/fancy-example.css';
 //Note Cartesian3.fromDegrees(LONG, LAT, elevation)
 const pointGraphics = { pixelSize: 10 };
 
-//TODO: Dynamically generate Entities based on DB
 class CustomCesium extends React.Component {
 
   constructor(props) {
@@ -45,6 +44,7 @@ class CustomCesium extends React.Component {
     this.setState(prevState => ({ modalOpen: false }));
   }
 
+  // Renders main globe screen
   render() {
     const {hasSearched, bookings} = this.state;
     var filteredbookings = this.state;
@@ -120,9 +120,6 @@ class CustomCesium extends React.Component {
       }
       
 
-      console.log(filteredbookings);
-      console.log(this.state.photoChecked.toString());
-      console.log(this.state.videoChecked.toString());
     
     //Param is data from child when it gets called.
 
@@ -180,8 +177,7 @@ class CustomCesium extends React.Component {
     //list of current user's bookings
     var user = JSON.parse(sessionStorage.getItem('current_user'));
     var bookingIds = user.bookingIds;
-    console.log(user);
-    console.log(bookingIds);
+
 
     fetch('http://localhost:8080/bookings')
     .then(res => res.json())
@@ -196,7 +192,6 @@ class CustomCesium extends React.Component {
         var url = booking._links.self.href;
         url = url.split('/');
         url = url.pop();
-        console.log(url);
         
         //When a booking is "OPEN", it is public so no need to filer by bookings user owns
         if (booking.bookingPrivacy == "OPEN") {
@@ -219,7 +214,6 @@ class CustomCesium extends React.Component {
           } 
         } //end else
       });
-      console.log(displayedBookings);
       currentComponent.setState({bookings: displayedBookings})
     }))
     .catch(console.log)

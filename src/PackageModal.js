@@ -16,15 +16,18 @@ class PackageModal extends React.Component {
     this.book = this.book.bind(this);
     }
     
+    // Toggling Component Showing
     _onButtonClick() {
     this.setState({
       showComponent: true,
     });
   }
+    // Change to booking screen given parameter of what was selected
     book(index){
         var cost = this.state.packageCosts[index];
         ReactDOM.render(<BookingScreen cost = {cost} locationCoordinates={this.props.locationCoordinates} address={this.props.address}/>, document.getElementById('application'));
     }
+    // Render window
     render () {
         return (
             <div>
