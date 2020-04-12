@@ -5,6 +5,7 @@ import { Cartesian3, Rectangle} from "cesium";
 import ModalButton from './ModalBtn.js';
 import Modal from 'react-modal';
 import PackageModal from './PackageModal';
+import View from './View';
 
 import {
     Accordion,
@@ -18,6 +19,9 @@ import 'react-accessible-accordion/dist/fancy-example.css';
 
 //Note Cartesian3.fromDegrees(LONG, LAT, elevation)
 const pointGraphics = { pixelSize: 10 };
+
+//baseUrl
+const baseUrl = "http://localhost:8080/";
 
 class CustomCesium extends React.Component {
 
@@ -37,6 +41,7 @@ class CustomCesium extends React.Component {
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
   }
+
   showModal() {
     this.setState(prevState => ({ modalOpen: true }));
   }
@@ -153,11 +158,12 @@ class CustomCesium extends React.Component {
               <p>Booking Privacy: {booking.bookingPrivacy}</p>
               <p>Booking Status: {booking.bookingStatus}</p>
               <p>Rooms:</p> <table> <tr><th>Room Name</th> <th># Photos</th> <th>Videos?</th></tr>
-              {booking.rooms.map((row) => (
+              {booking.rooms.map((row, index) => (
                 <tr>
                   <td>{row[0]}</td>
                   <td>{row[1]}</td>
                   <td>{row[2]}</td>
+                  {<View roomIndex={index} booking={booking}></View>}
                 </tr>
               ))}
               </table>
@@ -179,7 +185,7 @@ class CustomCesium extends React.Component {
     var bookingIds = user.bookingIds;
 
 
-    fetch('http://localhost:8080/bookings')
+    fetch(baseUrl + 'bookings')
     .then(res => res.json())
     .then((function(data){
 
@@ -192,27 +198,27 @@ class CustomCesium extends React.Component {
         var url = booking._links.self.href;
         url = url.split('/');
         url = url.pop();
-        
+
+        let parseString;
+        let posArray;
+        let locationCoordinates;
         //When a booking is "OPEN", it is public so no need to filer by bookings user owns
-        if (booking.bookingPrivacy == "OPEN") {
-          var parseString = booking.locationCoordinates.substring(1, booking.locationCoordinates.length - 1);
-          var posArray = parseString.split(",");
-          var locationCoordinates = Cartesian3.fromElements(parseFloat(posArray[0]), parseFloat(posArray[1]), parseFloat(posArray[2]));
+        if (booking.bookingPrivacy === "OPEN") {
+          parseString = booking.locationCoordinates.substring(1, booking.locationCoordinates.length - 1);
+          posArray = parseString.split(",");
+          locationCoordinates = Cartesian3.fromElements(parseFloat(posArray[0]), parseFloat(posArray[1]), parseFloat(posArray[2]));
           booking.locationCoordinates = locationCoordinates;
           displayedBookings.push(booking);
-        } else if (booking.bookingPrivacy == "PRIVATE") {
+        } else if (booking.bookingPrivacy === "PRIVATE") {
           //booking privacy is closed so we need to check if it is in list of bookingIds for that user
           if (bookingIds.includes(url) ) {
-            var parseString = booking.locationCoordinates.substring(1, booking.locationCoordinates.length - 1);
-            var posArray = parseString.split(",");
-            var locationCoordinates = Cartesian3.fromElements(parseFloat(posArray[0]), parseFloat(posArray[1]), parseFloat(posArray[2]));
+            parseString = booking.locationCoordinates.substring(1, booking.locationCoordinates.length - 1);
+            posArray = parseString.split(",");
+            locationCoordinates = Cartesian3.fromElements(parseFloat(posArray[0]), parseFloat(posArray[1]), parseFloat(posArray[2]));
             booking.locationCoordinates = locationCoordinates;
             displayedBookings.push(booking);
           }
-          else {
-            console.log("Booking not added to list.");
-          } 
-        } //end else
+        }
       });
       currentComponent.setState({bookings: displayedBookings})
     }))
