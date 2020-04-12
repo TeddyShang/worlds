@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import PaypalExpressBtn from 'react-paypal-express-checkout';
 
 //https://github.com/thinhvo0108/react-paypal-express-checkout
@@ -24,6 +23,7 @@ class PaypalButton extends React.Component {
         this.onError = this.onError.bind(this);
     }
 
+    //The below three functions will callback to parent, BookingScreen.js
     onSuccess = (payment) => {
         this.props.payment_successful();
 
