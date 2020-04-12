@@ -2,7 +2,10 @@ import React from 'react';
 import './BaseIVueStyle.css';
 import ModalButton from './ModalBtn.js';
 import Modal from 'react-modal';
-
+/**
+ * This class is for a realtor to upload their profile pictures to
+ * the S3 database.
+ */
 class ProfilePictureUpload extends React.Component {
     constructor(props) {
         super(props);

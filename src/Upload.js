@@ -3,7 +3,12 @@ import './BaseIVueStyle.css';
 import ModalButton from './ModalBtn.js';
 import Modal from 'react-modal';
 
-
+/**
+ * This class does the upload of media by following steps:
+ * 1. create mediametadata object through POST request
+ * 2. upload media onto AWS S3
+ * 3. based on previous step, edit the media metadata using PUT request
+ */
 class Upload extends React.Component{
     constructor(props) {
         super(props);
