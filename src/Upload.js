@@ -9,6 +9,8 @@ import Modal from 'react-modal';
  * 2. upload media onto AWS S3
  * 3. based on previous step, edit the media metadata using PUT request
  */
+const S3Url = 'https://worlds-media.s3.amazonaws.com/';
+const baseUrl = 'http://localhost:8080/';
 class Upload extends React.Component{
     constructor(props) {
         super(props);
@@ -48,7 +50,7 @@ class Upload extends React.Component{
         this.setState ({
             creatorId: creatorId,
             bookingInformation : bookingInformation,
-            roomIndex : this.props.roomIndex
+            roomIndex : roomIndex
         })
     }
 
@@ -67,7 +69,7 @@ class Upload extends React.Component{
             "roomInformation": this.state.bookingInformation.rooms[0][0],
             "urlToMedia": ""
         };
-        fetch('http://localhost:8080/mediametadatas', {
+        fetch(baseUrl + 'mediametadatas', {
             method: 'POST',
             body: JSON.stringify(initialMediaMetaData),
             headers: {
@@ -88,22 +90,20 @@ class Upload extends React.Component{
                 var split = bookingUrl.split("/");
                 bookingId = split[split.length - 1];
 
-                var baseUrl = 'https://worlds-media.s3.amazonaws.com/';
-                let AWSresponse;
                 var finalKey = "MediaContent/" + bookingId + "/" + mediametadataId + "/" + this.state.file[0].name;
-                finalURL = baseUrl + finalKey;
+                finalURL = S3Url + finalKey;
                 const formData = new FormData();
                 formData.append('key', finalKey);
                 formData.append('file', this.state.file[0]);
 
                 formData.append('Content-Type', this.state.file.type);
 
-                fetch(baseUrl, {
+                fetch(S3Url, {
                     method: 'POST',
                     body: formData
                 }).then((response) => {
                     //handle response
-                    if (response.status == 204) {
+                    if (response.status === 204) {
                         //then successful
                     }
                 })
@@ -120,7 +120,7 @@ class Upload extends React.Component{
                     "roomInformation": finalMediaMetadata.roomInformation, 
                     "urlToMedia": finalURL
                 }
-                fetch('http://localhost:8080/mediametadatas/' + mediametadataId, {
+                fetch(baseUrl + 'mediametadatas/' + mediametadataId, {
                     method: 'PUT',
                     body: JSON.stringify(finalMetadataBody),
                     headers: {
@@ -153,7 +153,7 @@ class Upload extends React.Component{
                     "mediaIdsByRoom":  mediaIdsByRoom,
                     "dateCompleted": booking.dateCompleted
                 }
-                fetch('http://localhost:8080/bookings/' + bookingId, {
+                fetch(baseUrl + 'bookings/' + bookingId, {
                     method: 'PUT',
                     body: JSON.stringify(finalBookingBody),
                     headers: {
