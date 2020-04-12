@@ -9,6 +9,7 @@ const RegisType = {
     REALTOR: 1,
     CONTENT_CREATOR: 2
 }
+const baseUrl = "http://localhost:8080/";
 
 // Choosing which registration type you want
 class SignUpScreen extends React.Component {
@@ -74,7 +75,7 @@ class SignUpScreenRegistration extends React.Component {
         this.setState({
             userType: type,
         })
-        this.typeName = type == 0 ? "Staff" : type == 1 ? "Realtor" :"Content Creator";
+        this.typeName = type === 0 ? "Staff" : type === 1 ? "Realtor" :"Content Creator";
     }
 
     // Updating state when user changes input
@@ -82,7 +83,7 @@ class SignUpScreenRegistration extends React.Component {
         // Update verified password
         if (["password1", "password2"].includes(event.target.name)) {
             this.passwords[event.target.name] = event.target.value;
-            if (this.passwords.password1 == this.passwords.password2) {
+            if (this.passwords.password1 === this.passwords.password2) {
                 this.setState({hashedPassword: this.passwords.password1});
             }
         }
@@ -98,7 +99,7 @@ class SignUpScreenRegistration extends React.Component {
 
         let currentComponent = this;
 
-        fetch('http://localhost:8080/users', {
+        fetch(baseUrl + 'users', {
             method: 'POST',
             body: JSON.stringify(this.state),
             headers: {
@@ -134,7 +135,7 @@ class SignUpScreenRegistration extends React.Component {
     // Render the registration screen
     render() {
         var state = this.state;
-        if (state.userType == RegisType.REALTOR) {
+        if (state.userType === RegisType.REALTOR) {
             return (
                 <div class="mainCenterDiv">
                     <h1>iVue Real Estate Sign Up</h1>
