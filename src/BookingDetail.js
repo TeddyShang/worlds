@@ -5,6 +5,7 @@ import View from './View';
 import { Viewer} from "resium";
 import { Cartesian3, Rectangle} from "cesium";
 
+const baseUrl = "http://localhost:8080/";
 class BookingDetail extends React.Component {
 
     constructor(props) {
@@ -31,9 +32,9 @@ class BookingDetail extends React.Component {
         this.editMode = false;
         this.clickEdit = this.clickEdit.bind(this);
         this.clickSave = this.clickSave.bind(this);
-        this.renderEditButton = this.renderEditButton.bind(this);
     }
 
+    //On component mount, get all the data we need and set initial state
     componentDidMount() {
         //Setup
         var booking = this.props.booking;
@@ -46,8 +47,7 @@ class BookingDetail extends React.Component {
         var realtorUserId = booking.realtorId;
         let realtor;
 
-
-        fetch('http://localhost:8080/users/' + realtorUserId, {
+        fetch( baseUrl + 'users/' + realtorUserId, {
             method: 'GET'
         })
             .then(function (response) {
@@ -63,11 +63,11 @@ class BookingDetail extends React.Component {
         var creatorUserId = booking.creatorId;
         let creator;
 
-        if (creatorUserId == "" || creatorUserId == null) {
+        if (creatorUserId === "" || creatorUserId === null) {
             creator = "Not Assigned Yet";
             currentComponent.setState({ creator: creator })
         } else {
-            fetch('http://localhost:8080/users/' + creatorUserId, {
+            fetch( baseUrl + 'users/' + creatorUserId, {
                 method: 'GET'
             })
                 .then(function (response) {
@@ -87,19 +87,19 @@ class BookingDetail extends React.Component {
         var dateCompleted = booking.dateCompleted;
 
         //Convert dateCompleted to readable date/time
-        if (dateCompleted == null || dateCompleted == "") {
+        if (dateCompleted === null || dateCompleted === "") {
             dateCompleted = "Not Completed Yet";
 
         } else {
-            var dateCompleted = booking.dateCompleted;
             var date = new Date(dateCompleted);
             dateCompleted = date.toLocaleDateString();
         }
 
         ////Convert dateCreated to readable date/time
         var dateCreated = booking.dateCreated;
-        var date = new Date(dateCreated);
-        dateCreated = date.toLocaleDateString();
+
+        var tempDate = new Date(dateCreated);
+        dateCreated = tempDate.toLocaleDateString();
 
         //Address, bookingPrivacy, and bookingStatus are fine
         var address = booking.address;
@@ -121,6 +121,7 @@ class BookingDetail extends React.Component {
         })
     }
 
+    //Refreshes the page and gets latest data
     refresh() {
         let currentComponent = this;
         fetch(this.state.booking._links.self.href, {
@@ -170,6 +171,7 @@ class BookingDetail extends React.Component {
             });
         })
     }
+
     //Set the booking as cancelled
     realtorCancel() {
         let currentComponent = this;
@@ -206,11 +208,13 @@ class BookingDetail extends React.Component {
             });
         })
     }
+
     // enable user to edit the requested date.
     clickEdit = () => {
         this.editMode = true;
         this.setState({ state: this.state });
     }
+
     // save current booking detail with PUT request.
     clickSave = () =>  {
         this.editMode = false;
@@ -218,7 +222,7 @@ class BookingDetail extends React.Component {
         var booking = currentComponent.state.booking;
         var bookingLink = booking._links.self.href;
 
-        //process address and send when resolved
+        //process address and send whole booking when resolved
         var address = document.getElementById("Address").value
         const node = this.ref.current;
         const geocoder = node.cesiumElement.geocoder.viewModel._geocoderServices[1];
@@ -268,21 +272,6 @@ class BookingDetail extends React.Component {
         
     }
 
-    // renders edit or save button depend on user's past action.
-    // currently not implemented on render method.
-    renderEditButton = () => {
-        if (!this.editMode) {
-            return (
-                <button class="button fullWidth " onClick={this.clickEdit}>Edit</button>
-            )
-        } else {
-            return (
-                <button class="button fullWidth " onClick={this.clickSave} type="button">Save</button>
-            )
-        }
-    }
-
-
     //Set the booking as completed, also mark the time completed
     realtorConfirm() {
         let currentComponent = this;
@@ -325,9 +314,9 @@ class BookingDetail extends React.Component {
         })
     }
 
-
+    //Screens depend on user type. Buttons displayed depend on booking state
     render() {
-        if (this.state.loaded && (this.state.user.userType == "CREATOR" || this.state.user.userType == "STAFF")) {
+        if (this.state.loaded && (this.state.user.userType === "CREATOR" || this.state.user.userType === "STAFF")) {
             return (
                 <div class="mainCenterDiv">
                     <h1>iVue Booking Detail</h1>
@@ -387,7 +376,7 @@ class BookingDetail extends React.Component {
                 </div>
             )
 
-        } else if (this.state.loaded && this.state.user.userType == "REALTOR") {
+        } else if (this.state.loaded && this.state.user.userType === "REALTOR") {
             if (this.editMode){
                 return (
                     <div class="mainCenterDiv">
