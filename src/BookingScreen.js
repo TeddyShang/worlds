@@ -1,11 +1,12 @@
 import React from 'react';
 import './BookingWindow.css';
-import { thisExpression } from '@babel/types';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Menu from './Menu'
 import CustomCesium from './CustomCesium';
 import PaypalButton from './PaypalButton';
+
+const baseUrl = "http://localhost:8080/";
 
 // The screen with the many rooms to be booked
 class BookingScreen extends React.Component {
@@ -65,7 +66,7 @@ class BookingScreen extends React.Component {
     payment_successful(){
         let currentComponent = this;
         let httpStatus;
-        fetch('http://localhost:8080/bookings', {
+        fetch(baseUrl + 'bookings', {
             method: 'POST',
             body: JSON.stringify(currentComponent.state.confirmed_booking),
             headers: {
@@ -82,7 +83,7 @@ class BookingScreen extends React.Component {
         }).then(function(data) {
             //booking did not get posted
             if (httpStatus >= 400) {
-                alert("ERROR");
+                alert("Error. Booking was not saved");
             } else {
                 ReactDOM.render(<Menu />, document.getElementById('root'));
                 var customCesium = ReactDOM.render(<CustomCesium/>, document.getElementById('application'));
@@ -113,17 +114,17 @@ class BookingScreen extends React.Component {
         event.preventDefault();
 
         //Duplicate array
-        var tagsarr = new Array();
+        var tagsarr = [];
         var filteredRooms = [];
 
         for (var i = 0; i < this.state.rooms.length; i++) {
             if (this.state.rooms[i][1] > 0) {
                 tagsarr.push("Photos");
             }
-            if (this.state.rooms[i][2] == "True") {
+            if (this.state.rooms[i][2] === "True") {
                 tagsarr.push("Videos");
             }
-            if ((this.state.rooms[i][1] > 0 || this.state.rooms[i][2] == "True")) {
+            if ((this.state.rooms[i][1] > 0 || this.state.rooms[i][2] === "True")) {
                 filteredRooms.push(this.state.rooms[i]);
             }
         }
@@ -175,15 +176,15 @@ class BookingScreen extends React.Component {
         if (["photos", "video"].includes(event.target.className)) {
             let rooms = [...this.state.rooms];
             let val = 0;
-            if (event.target.className == "photos") {
+            if (event.target.className === "photos") {
                 val = event.target.value;
                 rooms[event.target.dataset.id][1] = val;
 
-            } else if (event.target.className == "video") {
+            } else if (event.target.className === "video") {
                 val = (event.target.checked ? "True" : "False");
                 rooms[event.target.dataset.id][2] = val;
             }
-            this.setState({ rooms }, () => console.log(this.state.rooms));
+            this.setState({ rooms });
 
             // Update Photo Counter
             this.photosRequested = 0;
@@ -192,7 +193,7 @@ class BookingScreen extends React.Component {
             }
         } else {
             // Address, date updating. Not name (dead field for now)
-            if (event.target.name != "name") {
+            if (event.target.name !== "name") {
                 this.setState({ [event.target.name]: event.target.value })
             }
         }
@@ -221,7 +222,7 @@ class BookingScreen extends React.Component {
                 case 9: bannerTitle = "Property Exterior | Outside"; break;
                 case 18: bannerTitle = "House & Property Additional Rooms or Features"; break;
             }
-            if (bannerTitle != "") {
+            if (bannerTitle !== "") {
                 roomsToRender.push(this.renderBanner(bannerTitle));
             }
 
