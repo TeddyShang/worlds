@@ -47,18 +47,19 @@
   * yarn add @craco/craco craco-cesium cesium resium 
   * (https://github.com/darwin-education/craco-cesium) 
 * Using Yarn
-  * To install packages “yarn install”
+  * To install packages “yarn install” in the worlds folder
 * Using NPM
-  * To install packages “npm install”
+  * To install packages “npm install” in the worlds folder
 
 ## Installation
+* Place folder wherever
 * React application launches on http://localhost:3000/
 ## Run instructions
-* To run in terminal execute “yarn start” or “npm start”
+* To run in terminal execute “yarn start” or “npm start” from the worlds folder
 * NOTE: Database/server must be running before starting Worlds application for best results
-* To exit the application:
+* To exit the application (in same terminal as "npm/yarn start" was run):
   * MAC/iOS: In terminal, execute: ctrl-xc
-  * Windows: In terminal window, execute: ctrl-c
+  * Windows: In terminal, execute: ctrl-c
 ## Troubleshooting
 * System does not recognise command ‘yarn’?
   * Try to reinstall ‘Yarn’ by executing “npm install -g yarn” in terminal/command prompt
