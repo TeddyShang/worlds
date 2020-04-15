@@ -13,8 +13,8 @@
 ## Install Information:
 ### Prerequisites
 * Optional: some type of IDE (VS Code, Intellij IDEA, etc.)
-* Latest Version of npm (https://www.npmjs.com/get-npm) and/or 
-* latest version of Yarn (https://classic.yarnpkg.com/en/docs/install/#mac-stable)
+* Latest version of npm (https://www.npmjs.com/get-npm) and/or 
+* Latest version of Yarn (https://classic.yarnpkg.com/en/docs/install/#mac-stable)
 ### Dependent Libraries
 * Dependent libraries can be found in ‘package.json’ under ‘dependencies’
     * "@babel/runtime": "^7.8.3",
