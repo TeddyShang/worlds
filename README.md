@@ -61,6 +61,6 @@
   * MAC/iOS: In terminal, execute: ctrl-xc
   * Windows: In terminal, execute: ctrl-c
 ## Troubleshooting
-* System does not recognise command ‘yarn’?
+* System does not recognize command ‘yarn’?
   * Try to reinstall ‘Yarn’ by executing “npm install -g yarn” in terminal/command prompt
   * On Windows ensure that yarn or npm is added to environmental variables
