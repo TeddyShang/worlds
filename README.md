@@ -9,7 +9,8 @@
 ## Bug Fixes:
 * Updated position of the filter button on globe view.
 ## Known Bugs:
-* No known bugs
+* Error when user has no bookings when navigating to dashboard
+* No pin drop on suggestion search. Cesium issue (https://github.com/CesiumGS/cesium/issues/6313)
 ## Install Information:
 ### Prerequisites
 * Optional: some type of IDE (VS Code, Intellij IDEA, etc.)
