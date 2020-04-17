@@ -7,7 +7,7 @@
 * Edit addresses in pending booking(s)
 * Payment with credit card (Paypal integration)
 ## Bug Fixes:
-* No bug fixes
+* Updated position of the filter button on globe view.
 ## Known Bugs:
 * No known bugs
 ## Install Information:
