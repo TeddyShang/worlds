@@ -129,7 +129,7 @@ class CustomCesium extends React.Component {
     //Param is data from child when it gets called.
 
       return <Viewer full ref={this.ref}>
-      <div style= {{height:"min-content", width:"min-content", right:"6%", zIndex:"999",top: "54px", position: "absolute"}}>
+      <div style= {{height:"min-content", width:"min-content", zIndex:"999",top: "24%", position: "absolute"}}>
             <Accordion allowZeroExpanded= "true">
                 <AccordionItem style={{backgroundColor: "beige"}}>
                     <AccordionItemHeading>
